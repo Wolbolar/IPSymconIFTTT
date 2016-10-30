@@ -1,0 +1,97 @@
+{
+	"elements":
+	[
+		{ "type": "Label", "label": "Connection from IP-Symcon to IFTTT" },
+		{ "type": "Label", "label": "IFTTT maker key (look in IFTTT maker channel)" },
+		{ "name": "iftttmakerkey", "type": "ValidationTextBox", "caption": "IFTTT maker key" },
+		{ "type": "Label", "label": "please choose an event name (no special characters or blank)" },
+		{ "name": "event", "type": "ValidationTextBox", "caption": "event name" },
+		{ "type": "Label", "label": "variables with values for IFTTT" },
+		{ "type": "SelectVariable", "name": "varvalue1", "caption": "value 1" },
+		{ "type": "SelectVariable", "name": "varvalue2", "caption": "value 2" },
+		{ "type": "SelectVariable", "name": "varvalue3", "caption": "value 3" },
+		{ "type": "Label", "label": "alternative leave variable empty und click check mark" },
+		{
+                    "name": "modulinput1",
+                    "type": "CheckBox",
+                    "caption": "use modul value 1"
+                },	
+		{ "name": "value1", "type": "ValidationTextBox", "caption": "value 1" },
+		{
+                    "name": "modulinput2",
+                    "type": "CheckBox",
+                    "caption": "use modul value 2"
+                },
+		{ "name": "value2", "type": "ValidationTextBox", "caption": "value 2" },
+		{
+                    "name": "modulinput3",
+                    "type": "CheckBox",
+                    "caption": "use modul value 3"
+                },
+		{ "name": "value3", "type": "ValidationTextBox", "caption": "value 3" },
+		{ "type": "Label", "label": "Return Message from IFTTT" },
+		{
+                    "name": "iftttreturn",
+                    "type": "CheckBox",
+                    "caption": "IFTTT Return"
+                }
+	],
+	"actions":
+			[
+				{ "type": "Label", "label": "Trigger IFTTT recipe" },
+				{ "type": "Button", "label": "Trigger event", "onClick": "IFTTT_TriggerEvent($id);" }
+			],		
+    "status":
+            [
+                {
+                    "code": 101,
+                    "icon": "inactive",
+                    "caption": "Creating instance."
+                },
+				{
+                    "code": 102,
+                    "icon": "active",
+                    "caption": "IFTTT created."
+                },
+                {
+                    "code": 104,
+                    "icon": "inactive",
+                    "caption": "interface closed."
+                },
+                {
+                    "code": 202,
+                    "icon": "error",
+                    "caption": "select a value or enter value in module."
+                },
+				{
+                    "code": 203,
+                    "icon": "error",
+                    "caption": "missing value, enter value in field value 1"
+                },
+                {
+                    "code": 204,
+                    "icon": "error",
+                    "caption": "missing value, enter value in field value 2"
+                },
+				{
+                    "code": 205,
+                    "icon": "error",
+                    "caption": "missing value, enter value in field value 3"
+                },
+				{
+                    "code": 206,
+                    "icon": "error",
+                    "caption": "field must not be empty."
+                },
+				{
+                    "code": 207,
+                    "icon": "error",
+                    "caption": "event not valid."
+                },
+				{
+                    "code": 208,
+                    "icon": "error",
+                    "caption": "IFTTT maker key not valid."
+                }
+            ]
+}

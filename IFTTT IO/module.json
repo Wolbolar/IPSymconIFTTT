@@ -1,0 +1,11 @@
+{
+    "id": "{2E91373A-E70B-46D8-99A7-71A499F6783A}",
+    "name": "IFTTTIO",
+    "type": 1,
+    "vendor": "IFTTT",
+    "aliases": ["IFTTT I/O"],
+    "parentRequirements": [],
+    "childRequirements": ["{BC2FAD9D-C92E-4CFA-ADA5-79A56DA5D2F7}"],
+    "implemented": ["{0259663C-D915-4A86-902B-70D865662E78}"],
+    "prefix": "IFTTTIO"
+}

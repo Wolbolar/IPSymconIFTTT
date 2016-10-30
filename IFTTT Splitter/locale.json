@@ -1,0 +1,9 @@
+{
+	"translations": {
+		"de": { 
+			"Creating instance.": "Die Instanz wird erstellt.",
+			"Interface closed.": "Interface geschlossen.",
+			"Zapier Splitter created.": "IFTTT Splitter erstellt."			
+		}
+	}
+}

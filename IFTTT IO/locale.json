@@ -1,0 +1,13 @@
+{
+	"translations": {
+		"de": { 
+			"Connection from IFTTT to IP-Symcon":"Verbindung von IFTTT to IP-Symcon",
+			"authentication for IFTTT webhook":"Authentifizierung für den IFTTT Webhook",
+			"username":"Benutzername",
+			"password":"Passwort",
+			"Creating instance.": "Die Instanz wird erstellt.",
+			"Interface closed.": "Interface geschlossen.",
+			"IFTTT I/O created.": "IFTTT I/O erstellt."			
+		}
+	}
+}

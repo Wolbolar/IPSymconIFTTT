@@ -1,0 +1,14 @@
+{
+	"id": "{7CBB8C1B-6A40-4DE8-9882-D505B76BA09D}",
+	"name": "IFTTT",
+	"type": 3,
+	"vendor": "IFTTT",
+	"aliases": 
+	[
+		"IFTTT"
+	],
+	"parentRequirements": ["{78A293F6-50ED-4250-AF5A-05F6F2C563EB}"],
+	"childRequirements": [],
+	"implemented": ["{F294A60D-30AF-4452-9A17-44A89EBE6ADE}"],
+	"prefix": "IFTTT"
+}

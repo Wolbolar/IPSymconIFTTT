@@ -1,0 +1,27 @@
+{
+    "elements":
+	[
+		{ "type": "Label", "label": "Connection from IFTTT to IP-Symcon" },
+		{ "type": "Label", "label": "authentication for IFTTT webhook" },
+		{ "name": "username", "type": "ValidationTextBox", "caption": "username" },
+		{ "type": "PasswordTextBox", "name": "password", "caption": "password" }
+	],
+	"status":
+            [
+                {
+                    "code": 101,
+                    "icon": "inactive",
+                    "caption": "Creating instance."
+                },
+				{
+                    "code": 102,
+                    "icon": "active",
+                    "caption": "IFTTT I/O created."
+                },
+                {
+                    "code": 104,
+                    "icon": "inactive",
+                    "caption": "Interface closed."
+                }
+            ]
+}
