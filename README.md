@@ -226,15 +226,15 @@ Das Modul in IP Symcon erwartet die Daten wie folgt:
 
 | Eigenschaft           | Wert                                                                                        |
 | :-------------------: | :-----------------------------------------------------------------------------------------: |
-| _**URI**_             | IP-Symcon Connect Adresse                                                                   |
+| _**URI**_             | IP-Symcon Connect Adresse/hook/IFTTT                                                        |
 |_**Methode**_          | POST                                                                                        |
 |_**Header**_           | {"charset":"utf-8","Content-Type":"application/json"}                                       |                                                                                          |
-|_**Body**_             | {"system":"ips4","objectid":22222,"values":<<payload>>}	                                  |
-|_**Authentifizierung**_| {"type":"Basic","username":<<username>>,"password":<<password>>}	                          |
-|<_username_>           | Username im IFTTT IO wird auch in der Testumgebung der Instanz angezeigt                    |
-|<_password_>           | Passwort im IFTTT IO wird auch in der Testumgebung der Instanz angezeigt                    |
+|_**Body**_             | {"system":"ips4","objectid":22222,"values":\[payload\]}	                                  |
+|_**Authentifizierung**_| {"type":"Basic","username":\[username\],"password":\[password\]}	                          |
+|\[_username_\]         | Username im IFTTT IO wird auch in der Testumgebung der Instanz angezeigt                    |
+|\[_password_\]         | Passwort im IFTTT IO wird auch in der Testumgebung der Instanz angezeigt                    |
 |_objectid_             | ObjektID der IFTTT Instanz die die Daten entgegen nehmen soll                               |
-|_values_ (<<payload>>) |{"value1":"value1string","value2":value2boolean,"value3":value3integer,"value4":value4float} |
+|_values_ (\[payload\]) |{"value1":"value1string","value2":value2boolean,"value3":value3integer,"value4":value4float} |
 	
 Die Values werden innerhalb der Form als JSON übergeben. Keys sind immer in "" zu setzen ebenso String Variablen.
 Integer, Float und Boolean sind keine "" um die Variable zu setzen. In dem Beispiel oben wenn es sich um eine Email
