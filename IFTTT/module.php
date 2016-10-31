@@ -713,7 +713,6 @@
 				{ "type": "Label", "label": " - choose Maker Channel" },
 				{ "type": "Label", "label": " - Receive a webrequest" },
 				{ "type": "Label", "label": " - Event Name: '.$event.'" },
-				
 				{ "type": "Label", "label": " - Create Trigger" },
 				{ "type": "Label", "label": " - continue with That of your choice" },
 				{ "type": "Label", "label": "______________________________________________________________________________________________________" },
@@ -753,7 +752,18 @@
 			
 			elseif ($type == 3) // Senden / Empfangen
 			{
-				$form = '"actions": [ { "type": "Label", "label": "IFTTT configuration: " },
+				$event = $this->ReadPropertyString('event');
+				$form = '"actions": [ { "type": "Label", "label": "IFTTT configuration:" },
+				{ "type": "Label", "label": "IFTTT This configuration:" },
+				{ "type": "Label", "label": " - Create a Recipe" },
+				{ "type": "Label", "label": " - push this" },
+				{ "type": "Label", "label": " - choose Maker Channel" },
+				{ "type": "Label", "label": " - Receive a webrequest" },
+				{ "type": "Label", "label": " - Event Name: '.$event.'" },
+				{ "type": "Label", "label": " - Create Trigger" },
+				{ "type": "Label", "label": " - continue with That of your choice" },
+				{ "type": "Label", "label": "______________________________________________________________________________________________________" },
+				{ "type": "Label", "label": "IFTTT That configuration: " },
 				{ "type": "Label", "label": " - Method:" },
 				{ "type": "Label", "label": "     POST " },
 				{ "type": "Label", "label": " - URI:" },
