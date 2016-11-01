@@ -38,15 +38,17 @@ etwas an IP-Symcon abzusetzten. Jedoch geht dies z.B. über den Umweg über eine
 In IP-Symcon werden die ankommenden Daten in eine Variable geschrieben. Da die Anzahl der Kombinationsmöglichkeiten an Channels
 und damit die zu übermittelnden Daten von Fall zu Fall unterschiedlich sind, müssen die Anzahl der Variablen im Modul eingestellt
 werden. 
+
 Weiterführende Information zu IFTTT
-https://ifttt.com
+
+[IFTTT](https://ifttt.com "IFTTT")
 
 
 ## 2. Voraussetzungen
 
  - IPS 4.1
  - IP-Symcon Connect
- - Account bei IFTTT https://ifttt.com
+ - Account bei [IFTTT](https://ifttt.com "IFTTT")
  - IFTTT Account mit eingerichteten Maker Channel
 
 ## 3. Installation
@@ -192,12 +194,16 @@ das schafft direkt an IP-Symcon Connect etwas zu schicken umso besser dann bitte
 mir nur Fehlermeldungen beim Triggern der Maker Aktion gab hier ein Beispiel wie man dies über ein Umweg 
 lösen kann. Ich nutze in dem Beispiel Microsoft Flow als weiteren Vermittlungsdienst zu IP-Symcon. Das gleiche 
 funktioniert aber auch über Zapier.
-	
-Siehe PHP Modul IPSymconZapier
-https://github.com/Wolbolar/IPSymconZapier.git
 
-Siehe PHP Modul IPSymconMicrosoftFlow
-https://github.com/Wolbolar/IPSymconMicrosoftFlow.git
+[Zapier](https://zapier.com "Zapier")
+	
+Siehe auch PHP Modul IPSymconZapier [IPSymconZapier](https://github.com/Wolbolar/IPSymconZapier.git "IPSymconZapier")
+
+[Microsoft Flow](https://flow.microsoft.com "Microsoft Flow")
+
+[Microsoft Flow Getting Started](https://flow.microsoft.com/en-us/documentation/getting-started/ "Microsoft Flow Getting Started")
+
+Siehe auch PHP Modul IPSymconMicrosoftFlow [IPSymconMicrosoftFlow](https://github.com/Wolbolar/IPSymconMicrosoftFlow.git "IPSymconMicrosoftFlow")
 
 ObjektID der Instanz an die die Daten geschickt werden sollen aus IP-Symcon aufschreiben.
 

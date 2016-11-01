@@ -663,22 +663,32 @@
 		
 		protected function FormGetVars($countrequestvars)
 		{
-			if($countrequestvars > 15)
+			if ($countrequestvars > 0)
+			{
+				if($countrequestvars > 15)
 				$countrequestvars = 15;
-			$form = '';
-			for ($i=1; $i<=$countrequestvars; $i++)
-			{
-				$form .= '{ "type": "SelectVariable", "name": "requestvarvalue'.$i.'", "caption": "value '.$i.'" },';
+				$form = '';
+				for ($i=1; $i<=$countrequestvars; $i++)
+				{
+					$form .= '{ "type": "SelectVariable", "name": "requestvarvalue'.$i.'", "caption": "value '.$i.'" },';
+				}
+				$form .= '{ "type": "Label", "label": "alternative leave variable empty und click check mark for creating a new variable" },';
+				for ($i=1; $i<=$countrequestvars; $i++)
+				{
+					$form .= '{
+						"name": "modulrequest'.$i.'",
+						"type": "CheckBox",
+						"caption": "module create variable for value '.$i.'"
+					},';
+				}
 			}
-			$form .= '{ "type": "Label", "label": "alternative leave variable empty und click check mark for creating a new variable" },';
-			for ($i=1; $i<=$countrequestvars; $i++)
+			else
 			{
-				$form .= '{
-                    "name": "modulrequest'.$i.'",
-                    "type": "CheckBox",
-                    "caption": "module create variable for value '.$i.'"
-                },';
+				$form = "";
 			}
+			
+			
+			
 			return $form;
 		}
 		
