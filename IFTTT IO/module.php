@@ -139,7 +139,7 @@ class IFTTTIO extends IPSModule
 	protected function SetIFTTTInterface()
 		{
 			$ipsversion = $this->GetIPSVersion();
-			if($ipsversion == 0 || $ipsversion == 1)
+			if($ipsversion == 0)
 				{
 					//prüfen ob Script existent
 					$SkriptID = @IPS_GetObjectIDByIdent("IFTTTIPSInterface", $this->InstanceID);

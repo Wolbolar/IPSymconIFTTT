@@ -1,5 +1,7 @@
 {
     "id": "{2E91373A-E70B-46D8-99A7-71A499F6783A}",
+	"title": "IFTTT I/O Instanz",
+	"description": "Webhook Instanz für IFTTT",
     "name": "IFTTTIO",
     "type": 1,
     "vendor": "IFTTT",

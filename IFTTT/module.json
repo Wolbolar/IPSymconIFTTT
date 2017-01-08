@@ -1,5 +1,7 @@
 {
 	"id": "{7CBB8C1B-6A40-4DE8-9882-D505B76BA09D}",
+	"title": "IFTTT Trigger Instanz",
+	"description": "Sendet einen Trigger an IFTTT oder empfängt einen Trigger z.B. über Microsoft Flow oder Zapier",
 	"name": "IFTTT",
 	"type": 3,
 	"vendor": "IFTTT",

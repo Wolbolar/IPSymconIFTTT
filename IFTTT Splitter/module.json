@@ -1,5 +1,7 @@
 {
     "id": "{B88FA10D-CCCA-483A-BAE2-01FEF13E7DD3}",
+	"title": "IFTTT Spliter Instanz",
+	"description": "Splitter Instanz für IFTTT",
     "name": "IFTTTSplitter",
     "type": 2,
     "vendor": "IFTTT",
