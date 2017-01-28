@@ -29,16 +29,16 @@ class IFTTTSplitter extends IPSModule
 			IPS_SetHidden($this->GetIDForIdent('BufferIN'), true);
 		}
 		
-		
+		$this->SetStatus(102);
+		/*
 		$ParentID = $this->GetParent();
-		
-			
+					
 		// Wenn I/O verbunden ist
 		if ($this->HasActiveParent($ParentID))
 			{
 				//Instanz aktiv
 			}
-	
+		*/
     }
 
 		/**
