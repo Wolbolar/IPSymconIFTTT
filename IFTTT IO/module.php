@@ -12,7 +12,8 @@ class IFTTTIO extends IPSModule
         //You cannot use variables here. Just static values.
 		
 		$this->RegisterPropertyString("username", "ipsymcon");
-		$this->RegisterPropertyString("password", "user@h0me");	
+		$this->RegisterPropertyString("password", "user@h0me");
+		$this->RegisterPropertyBoolean("debugiftttio", false);
     }
 
     public function ApplyChanges()
@@ -20,7 +21,14 @@ class IFTTTIO extends IPSModule
 	//Never delete this line!
         parent::ApplyChanges();
         $change = false;
-
+		
+		$debug = $this->ReadPropertyBoolean("debugiftttio");
+		if($debug)
+		{
+			$this->RegisterVariableString("ResponseIFTTT", "IFTTT Response", "", 1);
+			IPS_SetHidden($this->GetIDForIdent('ResponseIFTTT'), true);
+		}
+		
 		$this->SetIFTTTInterface();
 		$this->SetStatus(102);
 	}	
@@ -89,6 +97,11 @@ class IFTTTIO extends IPSModule
 			);
 			$status_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);   //get status code
 			$result=curl_exec ($ch);
+			$debug = $this->ReadPropertyBoolean("debugiftttio");
+			if($debug)
+			{
+				SetValue($this->GetIDForIdent("ResponseIFTTT"), $result);
+			}
 			curl_close ($ch);
 			return $result;
 		}
@@ -108,7 +121,7 @@ class IFTTTIO extends IPSModule
 				$value1 = $values->value1;
 				$value2 = $values->value2;;
 				$value3 = $values->value3;;
-				IPS_LogMessage("IFTTT I/O:", "Trigger IFTTT Event".utf8_decode($event));
+				IPS_LogMessage("IFTTT I/O:", "Trigger IFTTT Event ".utf8_decode($event));
 				
 				
 				$result = $this->SendEventTrigger($iftttmakerkey, $event, $value1, $value2, $value3);

@@ -1,6 +1,7 @@
 {
 	"translations": {
 		"de": { 
+			"Create Variable for Debug": "Variable für Debug anlegen",
 			"Creating instance.": "Die Instanz wird erstellt.",
 			"Interface closed.": "Interface geschlossen.",
 			"Zapier Splitter created.": "IFTTT Splitter erstellt."			
