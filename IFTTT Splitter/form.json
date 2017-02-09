@@ -1,12 +1,7 @@
 {
     	"elements":
 	[
-		{ "type": "Label", "label": "Create Variable for Debug" },
-		{
-                    "name": "debugifttt",
-                    "type": "CheckBox",
-                    "caption": "Debug"
-                }
+		{ "type": "Label", "label": "IFTTT Splitter" }
 	],
 	"status":
             [

@@ -270,8 +270,27 @@
 		
 		protected function WriteValues($valuesjson)
 		{
-			$values = json_decode($valuesjson, true);
-			$countvalues = count($values);
+			$this->SendDebug("Values from IFTTT",$valuesjson,0);
+			$values = json_decode($valuesjson);
+			if(isset($values->EventName))
+				$eventname = $values->EventName;
+			if(isset($values->Value1))
+				{
+					$countvalues = 1;
+					$value1 = $values->Value1;
+				}	
+			if(isset($values->Value2))
+				{
+					$countvalues = 2;
+					$value2 = $values->Value2;
+				}	
+			if(isset($values->Value3))
+				{
+					$countvalues = 3;
+					$value3 = $values->Value3;
+				}				
+			if(isset($values->OccurredAt))
+				$occurredat = $values->OccurredAt;
 			$countrequestvars = $this->ReadPropertyInteger('countrequestvars');
 			if ( $countvalues == $countrequestvars)
 			{
@@ -298,7 +317,7 @@
 							}
 						$i = $i+1;
 					}
-			 }
+			}
 			else
 			{
 				echo "Die Anzahl der Variablen stimmt nicht mit der übermittelten Anzahl an Werten überein!";

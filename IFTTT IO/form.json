@@ -4,13 +4,7 @@
 		{ "type": "Label", "label": "Connection from IFTTT to IP-Symcon" },
 		{ "type": "Label", "label": "authentication for IFTTT webhook" },
 		{ "name": "username", "type": "ValidationTextBox", "caption": "username" },
-		{ "type": "PasswordTextBox", "name": "password", "caption": "password" },
-		{ "type": "Label", "label": "Create Variable for Debug" },
-		{
-                    "name": "debugiftttio",
-                    "type": "CheckBox",
-                    "caption": "Debug"
-                }
+		{ "type": "PasswordTextBox", "name": "password", "caption": "password" }
 	],
 	"status":
             [

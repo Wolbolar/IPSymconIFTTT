@@ -13,7 +13,6 @@ class IFTTTIO extends IPSModule
 		
 		$this->RegisterPropertyString("username", "ipsymcon");
 		$this->RegisterPropertyString("password", "user@h0me");
-		$this->RegisterPropertyBoolean("debugiftttio", false);
     }
 
     public function ApplyChanges()
@@ -21,14 +20,7 @@ class IFTTTIO extends IPSModule
 	//Never delete this line!
         parent::ApplyChanges();
         $change = false;
-		
-		$debug = $this->ReadPropertyBoolean("debugiftttio");
-		if($debug)
-		{
-			$this->RegisterVariableString("ResponseIFTTT", "IFTTT Response", "", 1);
-			IPS_SetHidden($this->GetIDForIdent('ResponseIFTTT'), true);
-		}
-		
+				
 		$this->SetIFTTTInterface();
 		$this->SetStatus(102);
 	}	
@@ -97,11 +89,7 @@ class IFTTTIO extends IPSModule
 			);
 			$status_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);   //get status code
 			$result=curl_exec ($ch);
-			$debug = $this->ReadPropertyBoolean("debugiftttio");
-			if($debug)
-			{
-				SetValue($this->GetIDForIdent("ResponseIFTTT"), $result);
-			}
+			$this->SendDebug("ResponseIFTTT",$result,0);
 			curl_close ($ch);
 			return $result;
 		}
@@ -119,15 +107,14 @@ class IFTTTIO extends IPSModule
 				$event = $command->event;
 				$values = $command->values;
 				$value1 = $values->value1;
-				$value2 = $values->value2;;
-				$value3 = $values->value3;;
-				IPS_LogMessage("IFTTT I/O:", "Trigger IFTTT Event ".utf8_decode($event));
-				
-				
+				$value2 = $values->value2;
+				$value3 = $values->value3;
+				$this->SendDebug("IFTTT I/O:","Trigger IFTTT Event ".utf8_decode($event),0);
+							
 				$result = $this->SendEventTrigger($iftttmakerkey, $event, $value1, $value2, $value3);
 				$iftttpayload = array("value1" => $value1, "value2" => $value2, "value3" => $value3);
 				$data_string = json_encode($iftttpayload);
-				IPS_LogMessage("IFTTT I/O:", utf8_decode($data_string)." gesendet.");
+				$this->SendDebug("IFTTT I/O:",utf8_decode($data_string)." gesendet.",0);
 	        }
 	        catch (Exception $exc)
 	        {
@@ -290,6 +277,9 @@ IFTTTIO_ProcessHookDataOLD('.$this->InstanceID.');
 		{
 			$webhookusername = $this->ReadPropertyString('username');
 			$webhookpassword = $this->ReadPropertyString('password');
+			
+			//$this->SendDebug("SERVER ARRAY",print_r($_SERVER,true),0);
+						
 			//workaround for bug
 			if(!isset($_IPS))
 				global $_IPS;
@@ -298,20 +288,6 @@ IFTTTIO_ProcessHookDataOLD('.$this->InstanceID.');
 				echo "This script cannot be used this way.";
 				return;
 				} 
-			
-			if(!isset($_SERVER['PHP_AUTH_USER']))
-				$_SERVER['PHP_AUTH_USER'] = "";
-			if(!isset($_SERVER['PHP_AUTH_PW']))
-				$_SERVER['PHP_AUTH_PW'] = "";
-			 
-			if(($_SERVER['PHP_AUTH_USER'] != $webhookusername) || ($_SERVER['PHP_AUTH_PW'] != $webhookpassword))
-				{
-				header('WWW-Authenticate: Basic Realm="IFTTT WebHook"');
-				header('HTTP/1.0 401 Unauthorized');
-				echo "Authorization required";
-				return;
-				}
-			echo "Webhook IFTTT IP-Symcon 4";
 			
 			//workaround for bug
 			if(!isset($_IPS))
@@ -325,82 +301,20 @@ IFTTTIO_ProcessHookDataOLD('.$this->InstanceID.');
 			 # Capture JSON content
 			$iftttjson = file_get_contents('php://input');
 			$data = json_decode($iftttjson);
-			$this->SendJSON($data);
-			IPS_LogMessage("IFTTT I/O:", utf8_decode($iftttjson)." empfangen.");	
+			$username = $data->username;
+			$password = $data->password;
 			
-			
-			
-			//Auswerten von Webhooks von IFTTT
-			// IFTTT nutzt POST und IP Symcon Connect			
-			
-			# Capture JSON content
-			/*
-			$iftttjson = file_get_contents('php://input');
-			$payload = json_decode($iftttjson);
-			IPS_LogMessage("IFTTT I/O:", utf8_decode($payload)." empfangen.");
-			if($payload->username == $webhookusername && $payload->password == $webhookpassword)
+			if(($username != $webhookusername) || ($password != $webhookpassword))
 				{
-					$values = $payload->values;
-					$objectid = $payload->objectid;
-					$data = array("objectid"=>$objectid, "values"=>$values);
-					$this->SendJSON($data);
-					$data_string = json_encode($data);
-					IPS_LogMessage("IFTTT I/O:", utf8_decode($data_string)." empfangen.");
-					IPS_LogMessage("IFTTT I/O:", utf8_decode($iftttjson)." empfangen.");
-				}
-			else
-			{
-				//header('HTTP/1.0 401 Unauthorized');
+				header('HTTP/1.0 401 Unauthorized');
+				$this->SendDebug("IFTTT I/O:","Access denied",0);
 				echo "Authorization required";
 				return;
-			}*/
-			// IFTTT nutzt POST und Connect IP 
-			/*
-			if (isset($_POST['username'])&&isset($_POST['password']))
-				{
-					$zapierusername = $_POST['username'];
-					$zapierpassword = $_POST['password'];
-					$objectid = $_POST['objectid'];
-					$values = $_POST['values'];
-					//Debug
-					$debug = false;
-					if ($debug)
-						IPS_LogMessage("IFTTT I/O:", utf8_decode($values)." empfangen.");
-					$values = str_replace("False", "false", $values);
-					$values = json_decode($values); 
-					IPS_LogMessage("IFTTT I/O:", "user: ".utf8_decode($zapierusername).", password: ".utf8_decode($zapierpassword)." empfangen.");
-					
-					if ($webhookusername == $zapierusername && $webhookpassword == $zapierpassword)
-					{
-						$payload = array ("objectid" => $objectid, "values" => $values);
-						$message = json_encode($payload);
-						IPS_LogMessage("IFTTT I/O:", utf8_decode($message)." empfangen.");
-						$this->SendJSON($payload);
-					}	
 				}
-				*/
-			/*
-			if (isset($_POST['SecureData']))
-				{
-					$iftttjson = $_POST['SecureData'];
-					$iftttdata = json_decode($iftttjson);
-					$password = $iftttdata->password;
-					if ($webhookpassword == $password)
-					{
-						//echo "Passwort: ".$password."\n";
-						$objectid = $iftttdata->objectid;
-						//echo "ObjektID: ".$objectid."\n";
-						$Value1 = $iftttdata->Value1;
-						$Value2 = $iftttdata->Value2;
-						$Value3 = $iftttdata->Value3;
-						$values = array("Wert1" => $Value1, "Wert2" => $Value2, "Wert3" => $Value3);
-						$payload = array ("objectid" => $objectid, "values" => $values);
-						$message = json_encode($payload);
-						IPS_LogMessage("IFTTT I/O:", utf8_decode($message)." empfangen.");
-						$this->SendJSON($payload);
-					}	
-				}
-				*/
+			$objectid = $data->objectid;
+			$values = $data->values;
+			$this->SendDebug("IFTTT I/O:",utf8_decode($iftttjson)." empfangen.",0);
+			$this->SendJSON($data);
 		}
 	
 	/**
@@ -410,44 +324,45 @@ IFTTTIO_ProcessHookDataOLD('.$this->InstanceID.');
 	protected function ProcessHookData()
 	{
 		$webhookusername = $this->ReadPropertyString('username');
-			$webhookpassword = $this->ReadPropertyString('password');
-			//workaround for bug
-			if(!isset($_IPS))
-				global $_IPS;
-			if($_IPS['SENDER'] == "Execute")
-				{
-				echo "This script cannot be used this way.";
-				return;
-				} 
+		$webhookpassword = $this->ReadPropertyString('password');
+		
+		//$this->SendDebug("SERVER ARRAY",print_r($_SERVER,true),0);
+				
+		//workaround for bug
+		if(!isset($_IPS))
+			global $_IPS;
+		if($_IPS['SENDER'] == "Execute")
+			{
+			echo "This script cannot be used this way.";
+			return;
+			} 
 			
-			if(!isset($_SERVER['PHP_AUTH_USER']))
-				$_SERVER['PHP_AUTH_USER'] = "";
-			if(!isset($_SERVER['PHP_AUTH_PW']))
-				$_SERVER['PHP_AUTH_PW'] = "";
-			 
-			if(($_SERVER['PHP_AUTH_USER'] != $webhookusername) || ($_SERVER['PHP_AUTH_PW'] != $webhookpassword))
-				{
-				header('WWW-Authenticate: Basic Realm="IFTTT WebHook"');
-				header('HTTP/1.0 401 Unauthorized');
-				echo "Authorization required";
-				return;
-				}
-			echo "Webhook IFTTT IP-Symcon 4";
-			
-			//workaround for bug
-			if(!isset($_IPS))
-				global $_IPS;
-			if($_IPS['SENDER'] == "Execute")
-				{
-				echo "This script cannot be used this way.";
-				return;
-				} 
+		//workaround for bug
+		if(!isset($_IPS))
+			global $_IPS;
+		if($_IPS['SENDER'] == "Execute")
+			{
+			echo "This script cannot be used this way.";
+			return;
+			} 
 
-			 # Capture JSON content
-			$iftttjson = file_get_contents('php://input');
-			$data = json_decode($iftttjson);
-			$this->SendJSON($data);
-			IPS_LogMessage("IFTTT I/O:", utf8_decode($iftttjson)." empfangen.");
+		# Capture JSON content
+		$iftttjson = file_get_contents('php://input');
+		$data = json_decode($iftttjson);
+		$username = $data->username;
+		$password = $data->password;
+			
+		if(($username != $webhookusername) || ($password != $webhookpassword))
+			{
+			header('HTTP/1.0 401 Unauthorized');
+			$this->SendDebug("IFTTT I/O:","Access denied",0);
+			echo "Authorization required";
+			return;
+			}
+		$objectid = $data->objectid;
+		$values = $data->values;
+		$this->SendDebug("IFTTT I/O:",utf8_decode($iftttjson)." empfangen.",0);
+		$this->SendJSON($data);	
 	}
 	
 	################## SEMAPHOREN Helper  - private

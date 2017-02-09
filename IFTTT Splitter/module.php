@@ -11,7 +11,6 @@ class IFTTTSplitter extends IPSModule
 		//These lines are parsed on Symcon Startup or Instance creation
         //You cannot use variables here. Just static values.
 		$this->RequireParent("{2E91373A-E70B-46D8-99A7-71A499F6783A}", "IFTTT I/O"); //IFTTT I/O	
-		$this->RegisterPropertyBoolean("debugifttt", false);
     }
 
     public function ApplyChanges()
@@ -20,15 +19,7 @@ class IFTTTSplitter extends IPSModule
         parent::ApplyChanges();
         $change = false;
 		
-		$debug = $this->ReadPropertyBoolean("debugifttt");
-		if($debug)
-		{
-			$this->RegisterVariableString("BufferIN", "BufferIN", "", 1);
-			$this->RegisterVariableString("CommandOut", "CommandOut", "", 2);
-			IPS_SetHidden($this->GetIDForIdent('CommandOut'), true);
-			IPS_SetHidden($this->GetIDForIdent('BufferIN'), true);
-		}
-		
+				
 		$this->SetStatus(102);
 		/*
 		$ParentID = $this->GetParent();
@@ -121,14 +112,8 @@ class IFTTTSplitter extends IPSModule
 		$data = json_decode($JSONString);
 		$datasend = $data->Buffer;
 		$datasend = json_encode($datasend);
-		$debug = $this->ReadPropertyBoolean("debugifttt");
-		if($debug)
-		{
-			IPS_LogMessage("IFTTT Splitter Forward Data", $datasend);
-			SetValueString($this->GetIDForIdent("BufferIN"), $datasend);
-		}
-		
-		
+		$this->SendDebug("IFTTT Splitter Receive Data",$datasend,0);
+			
 		// Hier werden die Daten verarbeitet
 		
 	 
@@ -147,14 +132,8 @@ class IFTTTSplitter extends IPSModule
 		$data = json_decode($JSONString);
 		$datasend = $data->Buffer;
 		$datasend = json_encode($datasend);
-		$debug = $this->ReadPropertyBoolean("debugifttt");
-		if($debug)
-		{
-			IPS_LogMessage("IFTTT Splitter Forward Data", $datasend);
-			SetValueString($this->GetIDForIdent("CommandOut"), $datasend);
-		}
-		
-	 
+		$this->SendDebug("IFTTT Splitter Forward Data",$datasend,0);
+			
 		// Hier würde man den Buffer im Normalfall verarbeiten
 		// z.B. CRC prüfen, in Einzelteile zerlegen
 		try
