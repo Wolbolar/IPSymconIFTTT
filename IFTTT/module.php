@@ -47,14 +47,6 @@
 			
 			
 			
-			$iftttass =  Array(
-				Array(0, "Trigger Event",  "Execute", -1)
-				);
-						
-			$this->RegisterProfileIntegerAss("IFTTT.Trigger", "Execute", "", "", 0, 0, 0, 0, $iftttass);
-			$this->RegisterVariableInteger("IFTTTTriggerEventButton", "IFTTT Trigger Event Button", "IFTTT.Trigger", 1);
-			$this->EnableAction("IFTTTTriggerEventButton");
-			
 			$this->ValidateConfiguration();	
 		}
 		
@@ -70,6 +62,15 @@
 			
 			if ($selection == 1 || $selection == 3) // Senden , Senden / Empfangen
 			{
+				$iftttass =  Array(
+				Array(0, "Trigger Event",  "Execute", -1)
+				);
+						
+				$this->RegisterProfileIntegerAss("IFTTT.Trigger", "Execute", "", "", 0, 0, 0, 0, $iftttass);
+				$this->RegisterVariableInteger("IFTTTTriggerEventButton", "IFTTT Trigger Event Button", "IFTTT.Trigger", 1);
+				$this->EnableAction("IFTTTTriggerEventButton");
+				
+				
 				//key prüfen
 				if ($iftttmakerkey == "")
 					{
@@ -312,6 +313,7 @@
 								}
 								else
 								{
+									$this->SendDebug("IFTTT","Es wurde kein Wert für ".$value." gesetzt, Variablentyp stimmt nicht mit Wert überein.",0);
 									IPS_LogMessage("IFTTT:", "Es wurde kein Wert für ".$value." gesetzt, Variablentyp stimmt nicht mit Wert überein.");
 								}
 							}
@@ -320,9 +322,9 @@
 			}
 			else
 			{
-				echo "Die Anzahl der Variablen stimmt nicht mit der übermittelten Anzahl an Werten überein!";
-				IPS_LogMessage("IFTTT:", "Es wurden keine Werte gesetzt.");
-				IPS_LogMessage("IFTTT:", "Die Anzahl der Variablen stimmt nicht mit der übermittelten Anzahl an Werten überein!");
+				$this->SendDebug("IFTTT","Die Anzahl der Variablen stimmt nicht mit der übermittelten Anzahl an Werten überein!",0);
+				$this->SendDebug("IFTTT","Es wurden keine Werte gesetzt.",0);
+				$this->SendDebug("IFTTT","Die Anzahl der Variablen stimmt nicht mit der übermittelten Anzahl an Werten überein!",0);
 			}
 		}
 		
