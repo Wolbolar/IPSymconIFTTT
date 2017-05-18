@@ -10,26 +10,21 @@ class IFTTTSplitter extends IPSModule
 		
 		//These lines are parsed on Symcon Startup or Instance creation
         //You cannot use variables here. Just static values.
-		$this->RequireParent("{2E91373A-E70B-46D8-99A7-71A499F6783A}", "IFTTT I/O"); //IFTTT I/O	
+		$this->RequireParent("{2E91373A-E70B-46D8-99A7-71A499F6783A}"); //IFTTT I/O	
     }
 
     public function ApplyChanges()
     {
 	//Never delete this line!
         parent::ApplyChanges();
-        $change = false;
-		
-				
-		$this->SetStatus(102);
-		/*
+       
 		$ParentID = $this->GetParent();
 					
 		// Wenn I/O verbunden ist
 		if ($this->HasActiveParent($ParentID))
 			{
-				//Instanz aktiv
+				$this->SetStatus(102);
 			}
-		*/
     }
 
 		/**
@@ -38,10 +33,7 @@ class IFTTTSplitter extends IPSModule
         *
         *
         */
-	protected $debug = false;
 	
-	
-
 	################## DUMMYS / WOARKAROUNDS - protected
 
     protected function GetParent()
@@ -65,39 +57,6 @@ class IFTTTSplitter extends IPSModule
         return false;
     }
 
-    private function SetValueBoolean($Ident, $value)
-    {
-        $id = $this->GetIDForIdent($Ident);
-        if (GetValueBoolean($id) <> $value)
-        {
-            SetValueBoolean($id, $value);
-            return true;
-        }
-        return false;
-    }
-
-    private function SetValueInteger($Ident, $value)
-    {
-        $id = $this->GetIDForIdent($Ident);
-        if (GetValueInteger($id) <> $value)
-        {
-            SetValueInteger($id, $value);
-            return true;
-        }
-        return false;
-    }
-
-    private function SetValueString($Ident, $value)
-    {
-        $id = $this->GetIDForIdent($Ident);
-        if (GetValueString($id) <> $value)
-        {
-            SetValueString($id, $value);
-            return true;
-        }
-        return false;
-    }
-
     protected function SetStatus($InstanceStatus)
     {
         if ($InstanceStatus <> IPS_GetInstance($this->InstanceID)['InstanceStatus'])
@@ -110,9 +69,8 @@ class IFTTTSplitter extends IPSModule
 	 
 		// Empfangene Daten vom IFTTT I/O
 		$data = json_decode($JSONString);
-		$datasend = $data->Buffer;
-		$datasend = json_encode($datasend);
-		$this->SendDebug("IFTTT Splitter Receive Data",$datasend,0);
+		$dataio = json_encode($data->Buffer);
+		$this->SendDebug("ReceiveData IFTTT Splitter:",$dataio,0);
 			
 		// Hier werden die Daten verarbeitet
 		
@@ -132,13 +90,14 @@ class IFTTTSplitter extends IPSModule
 		$data = json_decode($JSONString);
 		$datasend = $data->Buffer;
 		$datasend = json_encode($datasend);
-		$this->SendDebug("IFTTT Splitter Forward Data",$datasend,0);
+		$this->SendDebug("IFTTT Splitter Forward Data:",$datasend,0);
 			
 		// Hier würde man den Buffer im Normalfall verarbeiten
 		// z.B. CRC prüfen, in Einzelteile zerlegen
 		try
 		{
-			//
+			// Weiterleiten zur I/O Instanz
+			$resultat = $this->SendDataToParent(json_encode(Array("DataID" => "{0259663C-D915-4A86-902B-70D865662E78}", "Buffer" => $data->Buffer))); //TX GUI
 		}
 		catch (Exception $ex)
 		{
@@ -146,8 +105,7 @@ class IFTTTSplitter extends IPSModule
 			echo ' in '.$ex->getFile().' line: '.$ex->getLine().'.';
 		}
 	 
-		// Weiterleiten zur I/O Instanz
-		$resultat = $this->SendDataToParent(json_encode(Array("DataID" => "{0259663C-D915-4A86-902B-70D865662E78}", "Buffer" => $data->Buffer))); //TX GUI
+		
 	 
 		// Weiterverarbeiten und durchreichen
 		return $resultat;

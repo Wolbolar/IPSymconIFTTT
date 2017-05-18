@@ -19,6 +19,11 @@
                     "code": 104,
                     "icon": "inactive",
                     "caption": "Interface closed."
+                },
+				{
+                    "code": 203,
+                    "icon": "error",
+                    "caption": "IO is not active."
                 }
             ]
 }

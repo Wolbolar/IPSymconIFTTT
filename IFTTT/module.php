@@ -7,7 +7,7 @@
 		{
 			//Never delete this line!
 			parent::Create();
-			$this->ConnectParent("{B88FA10D-CCCA-483A-BAE2-01FEF13E7DD3}", "IFTTT Splitter"); //IFTTT Splitter
+			$this->ConnectParent("{B88FA10D-CCCA-483A-BAE2-01FEF13E7DD3}"); //IFTTT Splitter
 			$this->RegisterPropertyString("iftttmakerkey", "");
 			$this->RegisterPropertyString("event", "");
 			$this->RegisterPropertyInteger("selection", 0);
