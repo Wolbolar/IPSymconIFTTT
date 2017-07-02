@@ -34,16 +34,17 @@ class IFTTTIO extends IPSModule
 		
 			
 	################## DATAPOINT RECEIVE FROM CHILD
-	
 
+    // Type String, Declaration can be used when PHP 7 is available
+    //public function ForwardData(string $JSONString)
 	public function ForwardData($JSONString)
 	{
 		// Empfangene Daten von der Splitter Instanz
 		$data = json_decode($JSONString);
 		
 	 
-		// Hier würde man den Buffer im Normalfall verarbeiten
-		// z.B. CRC prüfen, in Einzelteile zerlegen
+		// Hier wÃ¼rde man den Buffer im Normalfall verarbeiten
+		// z.B. CRC prÃ¼fen, in Einzelteile zerlegen
 		try
 		{
 			// Absenden an IFTTT
@@ -65,7 +66,7 @@ class IFTTTIO extends IPSModule
 	
 	protected function SendJSON ($data)
 	{
-		// Weiterleitung zu allen Gerät-/Device-Instanzen
+		// Weiterleitung zu allen GerÃ¤t-/Device-Instanzen
 		$this->SendDataToChildren(json_encode(Array("DataID" => "{BC2FAD9D-C92E-4CFA-ADA5-79A56DA5D2F7}", "Buffer" => $data))); //IFTTT I/O RX GUI
 	}
 	
@@ -141,7 +142,7 @@ class IFTTTIO extends IPSModule
 			$ipsversion = $this->GetIPSVersion();
 			if($ipsversion == 0)
 				{
-					//prüfen ob Script existent
+					//prÃ¼fen ob Script existent
 					$SkriptID = @IPS_GetObjectIDByIdent("IFTTTIPSInterface", $this->InstanceID);
 					if ($SkriptID === false)
 						{
@@ -219,7 +220,7 @@ class IFTTTIO extends IPSModule
   		}
 		
 	/**
-     * Löscht einen WebHook, wenn vorhanden.
+     * LÃ¶scht einen WebHook, wenn vorhanden.
      *
      * @access private
      * @param string $WebHook URI des WebHook.
@@ -249,7 +250,7 @@ class IFTTTIO extends IPSModule
     }  
 	
 	/**
-     * Löscht eine Script, sofern vorhanden.
+     * LÃ¶scht eine Script, sofern vorhanden.
      *
      * @access private
      * @param int $Ident Ident der Variable.
