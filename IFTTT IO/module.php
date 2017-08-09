@@ -19,8 +19,7 @@ class IFTTTIO extends IPSModule
     {
 	//Never delete this line!
         parent::ApplyChanges();
-        $change = false;
-				
+
 		$this->SetIFTTTInterface();
 		$this->SetStatus(102);
 	}	
@@ -41,7 +40,7 @@ class IFTTTIO extends IPSModule
 	{
 		// Empfangene Daten von der Splitter Instanz
 		$data = json_decode($JSONString);
-		
+		$result = false;
 	 
 		// Hier würde man den Buffer im Normalfall verarbeiten
 		// z.B. CRC prüfen, in Einzelteile zerlegen
@@ -54,14 +53,14 @@ class IFTTTIO extends IPSModule
 			//aufarbeiten
 			$command = $data->Buffer;
 			$result = $this->SendCommand ($command);
+
 		}
 		catch (Exception $ex)
 		{
 			echo $ex->getMessage();
 			echo ' in '.$ex->getFile().' line: '.$ex->getLine().'.';
 		}
-	 
-		return $result;
+        return $result;
 	}
 	
 	protected function SendJSON ($data)
@@ -89,7 +88,8 @@ class IFTTTIO extends IPSModule
 				'Content-Length: ' . strlen($data_string))
 			);
 			$status_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);   //get status code
-			$result=curl_exec ($ch);
+            $this->SendDebug("ResponseIFTTT", "Status Code: ".$status_code,0);
+            $result=curl_exec ($ch);
 			$this->SendDebug("ResponseIFTTT",$result,0);
 			curl_close ($ch);
 			return $result;
@@ -148,11 +148,11 @@ class IFTTTIO extends IPSModule
 						{
 							$ID = $this->RegisterScript("IFTTTIPSInterface", "IFTTT IPS Interface", $this->CreateWebHookScript(), 4);
 							IPS_SetHidden($ID, true);
-							$this->RegisterHookOLD('/hook/IFTTT', $ID);
+							$this->RegisterHook('/hook/IFTTT', $ID);
 						}
 					else
 						{
-							//echo "Die Skript-ID lautet: ". $SkriptID;
+                            $this->SendDebug("IFTTT I/O:","Skript mit ObjektID".$SkriptID." vorhanden.",0);
 						}
 				}
 			else
@@ -163,11 +163,11 @@ class IFTTTIO extends IPSModule
 						$this->UnregisterHook("/hook/IFTTT");
 						$this->UnregisterScript("IFTTTIPSInterface");
 					}
-					$this->RegisterHook("/hook/IFTTT");
+					$this->RegisterHook("/hook/IFTTT", $this->InstanceID);
 				}
 		}
 	
-	private function RegisterHookOLD($WebHook, $TargetID)
+	private function RegisterHook($WebHook, $TargetID)
 		{
 			$ids = IPS_GetInstanceListByModuleID("{015A6EB8-D6E5-4B93-B496-0D3F77AE9FE1}");
 			if (sizeof($ids) > 0)
@@ -192,32 +192,6 @@ class IFTTTIO extends IPSModule
 				IPS_ApplyChanges($ids[0]);
 			}
 		}
-		
-		private function RegisterHook($WebHook)
-		{
-  			$ids = IPS_GetInstanceListByModuleID("{015A6EB8-D6E5-4B93-B496-0D3F77AE9FE1}");
-  			if(sizeof($ids) > 0)
-				{
-  				$hooks = json_decode(IPS_GetProperty($ids[0], "Hooks"), true);
-  				$found = false;
-  				foreach($hooks as $index => $hook)
-					{
-					if($hook['Hook'] == $WebHook)
-						{
-						if($hook['TargetID'] == $this->InstanceID)
-  							return;
-						$hooks[$index]['TargetID'] = $this->InstanceID;
-  						$found = true;
-						}
-					}
-  				if(!$found)
-					{
- 					$hooks[] = Array("Hook" => $WebHook, "TargetID" => $this->InstanceID);
-					}
-  				IPS_SetProperty($ids[0], "Hooks", json_encode($hooks));
-  				IPS_ApplyChanges($ids[0]);
-				}
-  		}
 		
 	/**
      * Löscht einen WebHook, wenn vorhanden.
@@ -289,15 +263,6 @@ IFTTTIO_ProcessHookDataOLD('.$this->InstanceID.');
 				echo "This script cannot be used this way.";
 				return;
 				} 
-			
-			//workaround for bug
-			if(!isset($_IPS))
-				global $_IPS;
-			if($_IPS['SENDER'] == "Execute")
-				{
-				echo "This script cannot be used this way.";
-				return;
-				} 
 
 			 # Capture JSON content
 			$iftttjson = file_get_contents('php://input');
@@ -329,15 +294,6 @@ IFTTTIO_ProcessHookDataOLD('.$this->InstanceID.');
 		
 		//$this->SendDebug("SERVER ARRAY",print_r($_SERVER,true),0);
 				
-		//workaround for bug
-		if(!isset($_IPS))
-			global $_IPS;
-		if($_IPS['SENDER'] == "Execute")
-			{
-			echo "This script cannot be used this way.";
-			return;
-			} 
-			
 		//workaround for bug
 		if(!isset($_IPS))
 			global $_IPS;
