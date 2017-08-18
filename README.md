@@ -2,7 +2,7 @@
 ===
 
 Modul für IP-Symcon ab Version 4.1 ermöglicht die Kommunikation mit dem Dienst IFTTT.
-Anbindung von IFTTT an IP-Symcon über den Maker Channel.
+Anbindung von IFTTT an IP-Symcon über den _Webhooks_ Service.
 
 ## Dokumentation
 
@@ -18,24 +18,23 @@ Anbindung von IFTTT an IP-Symcon über den Maker Channel.
 ## 1. Funktionsumfang
 
 Der Internet Dienst IFTTT bietet die Möglichkeit verschiedene Internetdienste miteinander zu verknüpfen
-und so jeweils aus einem Trigger und einer Aktion eine Arbeitsablauf zu erstellen, genannt Recipe. Im Gegensatz zu andern
+und so jeweils aus einem Trigger und einer Aktion eine Arbeitsablauf zu erstellen, genannt Applet. Im Gegensatz zu andern
 Diensten lassen sich bei IFTTT nur ein Trigger mit einer Aktion verknüpfen.
-Der Maker Channel von IFTTT kann als Trigger (__*THIS*__) oder auch als Aktion (__*THAT*__) in IFTTT Recipes eingebunden werden. Dabei
-kann der Maker Channel mit beliebigen anderen Channels zu einem IFTTT Recipe verbunden werden.
+Der _Webhooks_ Service von IFTTT kann als Trigger (__*THIS*__) oder auch als Aktion (__*THAT*__) in IFTTT Applets eingebunden werden. Dabei
+kann der _Webhooks_ Service mit beliebigen anderen Services zu einem IFTTT Applet verbunden werden.
 
 ####Trigger
-Der Trigger des Maker Channel erlaubt die Definition eines Events und lässt 3 Variablen zu die übertragen werden können. Mit
+Der Trigger des _Webhooks_ Service erlaubt die Definition eines Events und lässt 3 Variablen zu, die übertragen werden können. Mit
 dem Modul können Variablen verlinkt werden oder im Modul selber Werte als Konstante eingetragen werden, die dann von IP-Symcon
-an IFTTT geschickt werden um ein Trigger für ein Recipe auszulösen. Die übergebenen Variablen können dann in einer
+an IFTTT geschickt werden um ein Trigger für ein Applet auszulösen. Die übergebenen Variablen können dann in einer
 IFTTT Aktion weiterverwertet werden. Auf dieser Weise lassen sich Kanäle von IFTTT mit IP-Symcon 4 triggern.
 
 ####Aktion
-Bei Auslösen eines Triggers eines IFTTT Recipes kann eine Aktion ausgelöst werden, die Informationen an IP-Symcon weiterleitet.
+Bei Auslösen eines Triggers eines IFTTT Applets kann eine Aktion ausgelöst werden, die Informationen an IP-Symcon weiterleitet.
 Hierbei hängt es vom gewählten Trigger ab welche Zutaten (Ingredients) zur Verfügung stehen. Bei einem Email Channel könnten zum
 Beispiel From Subject und Body übertragen werden. Abhängig vom Trigger stehen dann unterschiedliche Auswahlen zur Verfügung.
-Grundsätzlich ist das Modul auch für den Empfang vorbereitet, mir selber ist es jedoch nicht gelungen direkt über den Maker Channel
-etwas an IP-Symcon abzusetzten. Jedoch geht dies z.B. über den Umweg über einen weiteren Dienst wie Zapier oder Flow. 
-In IP-Symcon werden die ankommenden Daten in eine Variable geschrieben. Da die Anzahl der Kombinationsmöglichkeiten an Channels
+Bei Aktionen kann die Anzahl der Variablen die übergeben werden frei definiert werden.  
+In IP-Symcon werden die ankommenden Daten in eine Variable geschrieben. Da die Anzahl der Kombinationsmöglichkeiten an Services
 und damit die zu übermittelnden Daten von Fall zu Fall unterschiedlich sind, müssen die Anzahl der Variablen im Modul eingestellt
 werden. 
 
@@ -49,56 +48,73 @@ Weiterführende Information zu IFTTT
  - IPS 4.1
  - IP-Symcon Connect
  - Account bei [IFTTT](https://ifttt.com "IFTTT")
- - IFTTT Account mit eingerichteten Maker Channel
+ - IFTTT Account mit eingerichteten _Webhooks_ Service
 
 ## 3. Installation
 
 ### a. Vorbereitungen in IFTTT
  Anmelden bei IFTTT bzw. Erstellen eines neuen Nutzers falls noch kein Account vorhanden.
- Nach dem Anmelden in der Menüleiste oben auf *Channels* wechseln.
-![Select Channel](docs/ifttt1.png?raw=true "Channel IFTTT")
+ Nach dem Anmelden in der Menüleiste oben auf *My Applets* wechseln.
+ 
+![Select Channel](docs/ifttt-menu1.png?raw=true "IFTTT Menu")
 
- Im Suchfeld *Maker* eingeben
+ Auf der Reiter _Services_ wechseln und im Suchfeld *Webhooks* eingeben
  
-![Select Maker Channel](docs/ifttt2.png?raw=true "Select Maker Channel")
+![Select Maker Channel](docs/ifttt-2.png?raw=true "Select Webhooks")
  
- Den Maker Channel auswählen und Connect herstellen
- Im Maker Fenster steht der Benutzername von IFTTT und unten der Makerkey den wir benötigen.
-![Maker Key](docs/ifttt3.png?raw=true "Maker Key")
- Wir notieren den Wert unter _*Your key is:*_
+ Den _Webhooks_ Service auswählen und auf _Settings_ wechseln. Connect in den Settings herstellen.
+ Wenn wir im _Webbhooks_ oben rechts auf _Dokumenation_ klicken erscheint ganz oben auf der neuen Seite der Eintrag
+ _Your key is:_ Den Key schreiben wir uns auf, diesen benötigen wir um später Applets aus IP-Symcon zu triggern.
 
 ### b. Laden des Moduls
 
- Wir wechseln zu IP-Symcon (Ver. 4.1) und fügen unter Kerninstanzen über _*Modules*_ -> Hinzufügen das Modul hinzu mit der URL
-```
-https://github.com/Wolbolar/IPSymconIFTTT.git
-```	
+Die IP-Symcon (min Ver. 4.x) Konsole öffnen. Im Objektbaum unter Kerninstanzen die Instanz __*Modules*__ durch einen doppelten Mausklick öffnen.
+
+![Modules](docs/Modules.png?raw=true "Modules")
+
+In der _Modules_ Instanz rechts oben auf den Button __*Hinzufügen*__ drücken.
+
+![Modules](docs/Hinzufuegen.png?raw=true "Hinzufügen")
+ 
+In dem sich öffnenden Fenster folgende URL hinzufügen:
+
+![Modules](docs/RepositoryURL.png?raw=true "URL Repository") 
+
+	
+    `https://github.com/Wolbolar/IPSymconIFTTT.git`  
+    
+und mit _OK_ bestätigen.    
+    
+
+    
+Anschließend erscheint ein Eintrag für das Modul in der Liste der Instanz _Modules_  
+
     
 ### c. Einrichtung in IPS
 
 In IP-Symcon wird von jedes Event das wir triggern wollen eine seperate Instanz angelegt. Der IFTTT IO und IFTTT Splitter wird
 automatisch mit angelegt. Um die Instanz zu erstellen wechseln wir in die Kategorie, unter der wir die Instanz platzieren wollen
 und erstellen mit *CTRL+1* eine neue Instanz.
+
 ![Instanz erstellen](docs/ifttt5.png?raw=true "Instanz erstellen")
 
 Über IFTTT finden wir die Instanz und mit weiter und Ok wird diese angelegt.
 
 ##### Auswahl der Kommunikation und Anzahl der Variablen
-Es gibt die Möglichkeit aus IP-Symcon herraus ein Recipe zu triggern als auch die Möglichkeit Daten von IFTTT über den Umweg von einem Webhook
-Dienst zu erhalten. Jede IP-Symcon IFTTT Instanz steht für ein Event das in IFTTT auftritt es können beliebig viele Instanzen angelegt werden.
-Nach dem Öffen der Instanz erscheint zunächst eine Abfrage ob die aktuelle Instanz nur zum Senden, Empfangen oder zum Senden/Empfangen dienen soll.
-![Kommunikationabfrage](docs/ifttta.png?raw=true "Makerkey eintragen")
+Es gibt die Möglichkeit aus IP-Symcon herraus ein Applet zu triggern als auch die Möglichkeit Daten von IFTTT zu erhalten. Jede IP-Symcon IFTTT Instanz steht für ein Event das in IFTTT auftritt es können beliebig viele Instanzen angelegt werden.
+Nach dem Öffen der Instanz erscheint zunächst eine Abfrage ob die aktuelle Instanz nur zum Senden, Empfangen oder zum Senden/Empfangen, Google Home dienen soll.
+![Kommunikationabfrage](docs/form-1.png?raw=true "Auswahl")
 
-Nachdem die passende Auswahl getroffen wurde bestätigen wir mit _Übernehmen_ anschließend **schließen wir die Instanz** und öffnen diese dann erneut.
+Nachdem die passende Auswahl getroffen wurde bestätigen wir mit _Übernehmen_.
 
 Nun haben wir je nach vorheriger Auswahl weitere Optionen. Jetzt legen wir die Anzahl der Variablen fest die die Instanz benutzten soll.
-Um ein Event in IFTTT zu triggern ist grundsätzlich gar keine Variable notwendig, es reicht der _Eventname_ zum Triggern eines Recipes aus. Es gibt aber
+Um ein Event in IFTTT zu triggern ist grundsätzlich gar keine Variable notwendig, es reicht der _Eventname_ zum Triggern eines Applets aus. Es gibt aber
 die Möglichkeit bis zu _*drei Werte*_ an IFTTT mit dem Trigger zu übertragen. Wir wählen also bei _Senden bis zu 3 Werte_ bei Bedarf aus. In die umgekehrte
 Richtung ist es abhänig vom Trigger wieviele Variablen gesendet werden.
 
 ![Varanzahl](docs/iftttb.png?raw=true "Variablenanzahl eintragen")
 
-Da es unzählige Channels und damit unzählige Möglichkeiten gibt was von IFTTT an IP-Symcon geschickt werden kann, je nachdem welches Recipe
+Da es unzählige Channels und damit unzählige Möglichkeiten gibt was von IFTTT an IP-Symcon geschickt werden kann, je nachdem welches Applet
 man verwendet, muss pro angelegter Instanz vom Nutzer festgelegt werden vielviele Variablen von IFTTT erwartet werden. Dabei ist dabei darauf zu
 achten das der gewählte Variablentyp dem zu erwartenden Wert aus IFTTT entspricht, ansonsten werden die Daten nicht abgelegt. Alternativ können auch
 keine existierenden Variablen angegeben werden sondern ein Haken gesetzt werden im Modul, dann legt das Modul beim ersten Eintreffen von Daten in der
@@ -114,7 +130,7 @@ Nun füllen wir im Feld IFTTT Makerkey den Key vom IFTTT Maker Channel ein den w
 
 Der Eventname kann frei gewählt werden. Es ist nur darauf zu achten das keine Umlaute, Sonderzeichen und Leerzeichen im Eventnamen
 verwendet werden. Dadurch das der Eventname frei bestimmt werden kann können also beliebig viele Instanzen in IP-Symcon angelegt werden
-mit jeweils einem anderen Eventnamen. Diese Triggern dann unterschiedliche Events (Recipes) in IFTTT. 
+mit jeweils einem anderen Eventnamen. Diese Triggern dann unterschiedliche Events (Applets) in IFTTT. 
 Unter Wert 1-3 kann eine Variable ausgewählt werden die an IFTTT geschickt werden soll.
 
 Alternativ besteht auch die Möglichkeit keine Variablen auszuwählen sondern stattdessen einen konstanten Wert direkt in das Modul einzutragen
@@ -124,135 +140,178 @@ Meldung von IFTTT im Webfront von IP-Symcon wenn die Nachricht verschickt worden
 Wenn alle Einstellungen vorgenommen worden sind und auf Übernehmen geklickt wurde müssen wir zunächst noch IFTTT konfigurieren bevor wir dann später
 mit Trigger Event eine Nachricht mit den zugeordneten Werten an IFTTT verschicken können.
 	
-### d. Konfiguration des Maker Recipe in IFTTT
+### d. Konfiguration des Webhooks Applets in IFTTT
 
-##### Maker als Trigger einen Recipes
+##### Webhooks als Trigger eines Applets
 
-Jetzt müssen wir in IFTTT noch ein Recipe erstellen das unsere Nachrichten von IP-Symcon an IFTTT entgegennimmt.
-Dazu wechseln wir wieder zu IFTTT wechseln zu My Recipes und erstellen ein neues Recipe mit Create a Recipe.
-![Create Recipe](docs/ifttt9.png?raw=true "Create Recipe")
+Jetzt müssen wir in IFTTT noch ein Applet erstellen das unsere Nachrichten von IP-Symcon an IFTTT entgegennimmt.
+Dazu wechseln wir wieder zu IFTTT wechseln zu _My Applets_ und erstellen ein neues Applet mit _New Applet_.
+![Create Recipe](docs/newapplet.png?raw=true "New Applet")
 
 Dann __*this*__ auswählen
-![select this](docs/ifttt10.png?raw=true "select this")
+![select this](docs/this.png?raw=true "select this")
 
-Im Suchfenster Maker eingeben und den Maker Channel auswählen
-![search maker](docs/ifttt11.png?raw=true "search maker")
+Im Suchfenster _Webhooks_ eingeben und den _Webhooks_ Service auswählen
+![search maker](docs/step1webhooks.png?raw=true "search webhooks")
 
 Bei Choose a Trigger auf Receive a web request drücken
-![choose trigger](docs/ifttt12.png?raw=true "choose trigger")
+![choose trigger](docs/step2webhooks.png?raw=true "choose trigger")
 
 Hier geben wir jetzt den Eventnamen ein den wir im IP-Symcon Modul gewählt haben. Im Beispiel ips_test. Dann drücken wir auf Create Trigger.
-![create trigger](docs/ifttt13.png?raw=true "create trigger")
+![create trigger](docs/step3webhooks.png?raw=true "create trigger")
 	
 Im nächsten Schritt __*That*__ auswählen
-![select that](docs/ifttt14.png?raw=true "select that")
+![select that](docs/step4webhooks.png?raw=true "select that")
 
 Hier wählen wir jetzt einen der verfügbaren Channel in IFTTT aus der in IFTTT getriggert werden soll und können die 3 Werte die aus IP-Symcon
 übergeben worden sind in der Action	verwenden.
 Im Beispiel nutze ich einfach mal gmail, ist vielleicht etwas sehr banal weil man ja direkt von IP-Symcon Emails bei einem Event verschicken kann,
 dies soll ja aber nur ein Beispiel für eines der vielen IFTTT Channels sein.
-![select gmail](docs/ifttt15.png?raw=true "select gmail")
+
+![select gmail](docs/step1gmail.png?raw=true "select gmail")
 	
 Hier gehen wir auf Send a email
-![send gmail](docs/ifttt16.png?raw=true "send gmail")
+![send gmail](docs/step2gmail.png?raw=true "send gmail")
 
 Hier finden wir jetzt wieder unseren Eventnamen und die Werte die wir von IP-Symcon an IFTTT geschickt haben. So können wir dann eben mit
 unterschiedlichen Events und unterschiedlichen Werten Recipes basteln.
-![values gmail](docs/ifttt18.png?raw=true "values gmail")
+![values gmail](docs/step3gmail.png?raw=true "values1 gmail")
+
 	
-Mit _*Create Action*_
-![finish create action](docs/ifttt19.png?raw=true "finish create action") 
+Mit _*Create Action*_ speichern wir das Recipe ab.
 
-speichern wir das Recipe ab.
+Mit Finish wird nun das Applet komplett erstellt.
 
+![finish](docs/step4gmail.png?raw=true "finish")
 
-##### Maker als Aktion eines Recipes	
-Wenn wir Daten von IFTTT an IP-Symcon schicken wollen binden wir den Maker Channel als Aktion in ein Recipe ein. Das Recipe schickt dann Daten von IFTTT an
+##### Webhooks als Aktion (That) eines Applets	
+Wenn wir Daten von IFTTT an IP-Symcon schicken wollen binden wir den _Webhooks_ Service als Aktion (That) in ein Applet ein. Das Applet schickt dann Daten von IFTTT an
 IP-Symcon wenn eine Aktion durch ein Recipe getriggert wird.
 	
-Zunächst wird ein Trigger erstellt mit dem Channel der den IF Anteil des Recipes stellen soll (s.o.).
+Zunächst wird ein Trigger (This) erstellt mit dem Service der den _This_ (IF) Anteil des Applets stellen soll (s.o.).
 	
 Wie oben bereits beschrieben hier das gleiche Vorgehen
-- _*Create a Recipe*_
+- _*New Applet*_
 - _*This*_ auswählen
-- beliebigen verfügbaren Channel auswählen (zur Vereinfachung nehme ich wieder gmail als Beispiel)
+- beliebigen verfügbaren Service auswählen (zur Vereinfachung nehme ich wieder gmail als Beispiel)
 
 z.B. _Any new email in inbox_ auswählen
-![any new email](docs/ifttt21.png?raw=true "any new email")
+![any new email](docs/gmail1action.png?raw=true "any new email")
 
 __*That*__ wählen wir diesmal als Aktion Maker Channel aus
-![action gmail that](docs/ifttt23.png?raw=true "action gmail that")
-![gmail maker](docs/ifttt24.png?raw=true "gmail maker")
+![action gmail that](docs/gmailthat.png?raw=true "action gmail that")
+
+Choose action service
+
+_Webhooks_
+
+![make a web request](docs/makeawebrequest.png?raw=true "make a webrequest")
 
 _Make a web request_ auswählen
 
+
+
 Jetzt müssen wir die passenden Werte eintragen
-![values action](docs/ifttt26.png?raw=true "values action")
+![form request](docs/webhookrequestform.png?raw=true "form request")
 	
-Mir persönlich ist es nicht gelungen direkt von IFTTT an IP-Symcon Connect etwas abzusetzen. Falls jemand
-das schafft direkt an IP-Symcon Connect etwas zu schicken umso besser dann bitte im Forum posten. Da es bei
-mir nur Fehlermeldungen beim Triggern der Maker Aktion gab hier ein Beispiel wie man dies über ein Umweg 
-lösen kann. Ich nutze in dem Beispiel Microsoft Flow als weiteren Vermittlungsdienst zu IP-Symcon. Das gleiche 
-funktioniert aber auch über Zapier.
 
-[Zapier](https://zapier.com "Zapier")
-	
-Siehe auch PHP Modul IPSymconZapier [IPSymconZapier](https://github.com/Wolbolar/IPSymconZapier.git "IPSymconZapier")
+Wir schauen die ObjektID der Instanz, an die die Daten geschickt werden sollen, in IP-Symcon nach und notieren diese.
 
-[Microsoft Flow](https://flow.microsoft.com "Microsoft Flow")
+Die Daten werden als JSON an IP-Symcon geschickt.
 
-[Microsoft Flow Getting Started](https://flow.microsoft.com/en-us/documentation/getting-started/ "Microsoft Flow Getting Started")
+| Eigenschaft| Wert                                                                                                          |
+| :--------: | :-----------------------------------------------------------------------------------------------------------: |	
+|URL:        | https://<IP-Symon Connect Adresse>.ipmagic.de/hook/IFTTT                                                      |
+|Method:     | _POST_                                                                                                        |
+|Content Type|  _application/json_                                                                                           |  
+|Body        |  {"username":"ipsymcon","password":"mypassword","objectid":12345,"values":{"EventName":"{{EventName}}",       |
+|            |  "Value1":"{{Value1}}", "Value2":"{{Value2}}","Value3":"{{Value3}}", "OccurredAt":"{{OccurredAt}}"<<<}>>>}    |
 
-Siehe auch PHP Modul IPSymconMicrosoftFlow [IPSymconMicrosoftFlow](https://github.com/Wolbolar/IPSymconMicrosoftFlow.git "IPSymconMicrosoftFlow")
-
-ObjektID der Instanz an die die Daten geschickt werden sollen aus IP-Symcon aufschreiben.
-
-Wenn wir die Daten z.B. an Microsoft Flow durchreichen senden wir nur die Nutzdaten als JSON.
-![ifttt flow config](docs/configiftttforflow.png?raw=true "IFTTT config Flow")
-
-| Eigenschaft| Wert                                                                                |
-| :--------: | :---------------------------------------------------------------------------------: |	
-|URL:        | Webhook des Dienstes (Flow oder Zapier) siehe auch Anleitung Flow, Zapier           |
-|Method:     | _POST_                                                                              |
-|Content Type|  _application/json_                                                                 |  
-|Body        |  {"Value1":"Value1","Value2":"Value2","Value3":"Value3","Value4":Value4"}           |
-
-In Microsoft Flow legen wir einen Flow an mit einer Anforderung als Trigger. Die URL der Flow Anforderung
-kopieren wir als URL in IFTTT.
-
-![anfoderung flow](docs/configflowa.png?raw=true "anforderung flow")
-
-Als Aktion wählen wir HTTP hiermit schicken wir die Daten nun endgültig zu IP-Symcon.
-
-![HTTP 1 Flow](docs/configflowb.png?raw=true "HTTP 1 Flow")
-
-![HTTP 2 Flow](docs/configflowc.png?raw=true "HTTP 2 Flow")
 
 Das Modul in IP Symcon erwartet die Daten wie folgt:
 
-| Eigenschaft           | Wert                                                                                        |
-| :-------------------: | :-----------------------------------------------------------------------------------------: |
-| _**URI**_             | IP-Symcon Connect Adresse/hook/IFTTT                                                        |
-|_**Methode**_          | POST                                                                                        |
-|_**Header**_           | {"charset":"utf-8","Content-Type":"application/json"}                                       |                                                                                          |
-|_**Body**_             | {"system":"ips4","objectid":22222,"values":\[payload\]}	                                  |
-|_**Authentifizierung**_| {"type":"Basic","username":\[username\],"password":\[password\]}	                          |
-|\[_username_\]         | Username im IFTTT IO wird auch in der Testumgebung der Instanz angezeigt                    |
-|\[_password_\]         | Passwort im IFTTT IO wird auch in der Testumgebung der Instanz angezeigt                    |
-|_objectid_             | ObjektID der IFTTT Instanz die die Daten entgegen nehmen soll                               |
-|_values_ (\[payload\]) |{"value1":"value1string","value2":value2boolean,"value3":value3integer,"value4":value4float} |
+| Eigenschaft           | Wert                                                                                                          |
+| :-------------------: | :-----------------------------------------------------------------------------------------------------------: |
+| _**URL**_             | IP-Symcon Connect Adresse/hook/IFTTT                                                                          |
+|_**Method**_           | POST                                                                                                          |
+|_**Content Type**_     | application/json                                                                                              |                                                                                          |
+|_**Body**_             |  {"username":"ipsymcon","password":"mypassword","objectid":12345,"values":{"EventName":"{{EventName}}",       |
+|                       |  "Value1":"{{Value1}}", "Value2":"{{Value2}}","Value3":"{{Value3}}", "OccurredAt":"{{OccurredAt}}"<<<}>>>}    |
+|\[_username_\]         | Username im IFTTT IO wird auch in der Testumgebung der Instanz angezeigt                                      |
+|\[_password_\]         | Passwort im IFTTT IO wird auch in der Testumgebung der Instanz angezeigt                                      |
+|_objectid_             | ObjektID der IFTTT Instanz die die Daten entgegen nehmen soll                                                 |
+|_values_ (\[payload\]) |{"value1":"value1string","value2":value2boolean,"value3":value3integer,"value4":value4float}                   |
 	
 Die Values werden innerhalb der Form als JSON übergeben. Keys sind immer in "" zu setzen ebenso String Variablen.
 Integer, Float und Boolean sind keine "" um die Variable zu setzen. In dem Beispiel oben wenn es sich um eine Email
 handeln würde wären also alle Variablen vom Typ String und werden in "" gesetzt.
 		
-Jetzt sollte wenn das Recipe triggert ein Web Request an IP-Symcon über Microsoft Flow geschickt werden. Der Inhalt wird in die gewählten Variablen der IFTTT Instanz
+Jetzt sollte wenn das Applet triggert ein Web Request an IP-Symcon geschickt werden. Der Inhalt wird in die gewählten Variablen der IFTTT Instanz
 abgelegt. Sollten die Auswahl getroffen worden sein das das Modul die Variablen anlegt, so werden diese mit dem ersten Eintreffen von Daten in IP-Symcon
 automatisch entsprechend dem Variablentyp der Daten in IP-Symcon angelegt.
 
 Auf die Variablen können wir dann in IP-Symcon ein Ereigniss legen das z.B. bei einem bestimmten Wert oder einer Variablenänderung oder Variablenaktualisierung
-weitere Dinge in IP-Symcon ausführt. Vielleicht lässt sich auf diese Weise ja noch das ein oder andere in IP-Symcon einbinden für das es derzeit noch keine Skripte
+weitere Dinge in IP-Symcon ausführt. Auf diese Weise lässt das ein oder andere in IP-Symcon einbinden für das es derzeit noch keine Skripte
 oder Module gibt.
+
+##### Google Home als Aktion (That) eines Applets	
+Wenn wir Google Home zum Schalten eines Geräts in IP-Symcon benutzten wollen benutzten wir den Google Assistant Service als This Teil des Applets. Das Applet schickt dann Daten von IFTTT an
+IP-Symcon wenn eine Aktion durch Google Home getriggert wird.
+	
+Zunächst wird ein Trigger (This) erstellt mit dem Service der den _This_ (IF) Anteil des Applets stellen soll (s.o.).
+	
+Wie oben bereits beschrieben hier das gleiche Vorgehen
+- _*New Applet*_
+- _*This*_ auswählen
+- _Google Assistant_ Service auswählen
+- Zum Einschalten eines geräts wählen wir _Say a simple phrase_ und füllen dort die Formulierung ein auf die Google Home reagieren soll
+- Als _That_ wählen wir _Webhooks_ Service
+- Hier tragen wir folgendes ein
+
+
+| Eigenschaft| Wert                                                                                                                                 |
+| :--------: | :----------------------------------------------------------------------------------------------------------------------------------: |	
+|URL:        | https://<IP-Symon Connect Adresse>.ipmagic.de/hook/IFTTT                                                                             |
+|Method:     | _POST_                                                                                                                               |
+|Content Type|  _application/json_                                                                                                                  |  
+|Body        |  {"username":"ipsymcon","password":"meinpasswort","objectid":12345,"values":{"EventName": "Wohnzimmer Licht","Status":true<<<}>>>}   |
+
+Folgende Daten werden erwartet:
+
+| Wert                  | Erläuterung                                                                                                   |
+| :-------------------: | :-----------------------------------------------------------------------------------------------------------: |
+|\[_username_\]         | Username im IFTTT IO wird auch in der Testumgebung der Instanz angezeigt                                      |
+|\[_password_\]         | Passwort im IFTTT IO wird auch in der Testumgebung der Instanz angezeigt                                      |
+|_objectid_             | ObjektID der IFTTT Instanz die die Daten entgegen nehmen soll                                                 |
+|_EventName_            | name des Events, wird in IP-Symcon als Variablenname gesetzt wenn das Modul die Variable anlegen sollte       |
+|_Status_               | Wert auf den die Variable gesetzt wird, true für einschalten, false für ausschalten                           |
+
+In IP-Symcon wählen wir _Google Home_ als Option im Konfigurationsformular.
+
+![google home](docs/google-home-form.png?raw=true "google home")
+ 
+Es gibt zwei Möglichkeiten, die erste ist es ein Skript zu starten, dieses wird im Konfigurationsformualr ausgewählt.
+
+Ein einfachen Skript könnte so aussehen
+
+```php
+<?
+$state = $_IPS['State'];
+ if($state)
+ {
+ 	HM_WriteValueBoolean(12345, "STATE", true);
+ }
+ else
+ {
+ 	HM_WriteValueBoolean(12345, "STATE", false);
+ }
+ ?>
+```
+
+Es wird der Wert in der Variable _**$_IPS['State']**_ an das Skript übergeben.
+
+Die zweite Möglichkeit besteht darin das Modul eine Variable anlegen zu lassen, auf diese Variable kann dann ein Ereignis gelegt werden das ein weiteres Gerät schaltet.
+
 	
 ## 4. Funktionsreferenz
 

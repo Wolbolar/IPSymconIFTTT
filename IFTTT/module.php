@@ -13,6 +13,8 @@
 			$this->RegisterPropertyInteger("selection", 0);
 			$this->RegisterPropertyInteger("countsendvars", 0);
 			$this->RegisterPropertyInteger("countrequestvars", 0);
+            $this->RegisterPropertyInteger("scriptid", 0);
+            $this->RegisterPropertyString("command", "");
 			for ($i=1; $i<=3; $i++)
 			{
 				$this->RegisterPropertyInteger("varvalue".$i, 0);
@@ -52,14 +54,28 @@
 		
 		private function ValidateConfiguration()
 		{
-			$change = false;
-			
 			$iftttmakerkey = $this->ReadPropertyString('iftttmakerkey');
 			$event = $this->ReadPropertyString('event');
 			$selection = $this->ReadPropertyInteger("selection");
 			$countsendvars = $this->ReadPropertyInteger("countsendvars");
 			$countrequestvars = $this->ReadPropertyInteger("countrequestvars");
-			
+            $checkformsend = false;
+            $checkformget = false;
+
+            if($selection == 4)// Google Home
+            {
+                $scriptid = $this->ReadPropertyInteger("scriptid");
+                $modulrequest = $this->ReadPropertyBoolean("modulrequest1");
+                // Valuecheck
+                if($modulrequest === false && $scriptid == 0)
+                {
+                    $errorid = 280;
+                    $this->SetStatus($errorid); // please complete scriptid field, errorid 280
+                }
+
+				$this->SetStatus(102);
+			}
+
 			if ($selection == 1 || $selection == 3) // Senden , Senden / Empfangen
 			{
 				$iftttass =  Array(
@@ -149,7 +165,7 @@
 						$valuecheck = true;
 					}	
 				}
-				$checkformsend = false;
+
 				if ($makerkeycheck === true && $eventcheck == true && $varvaluecheck === true && $valuecheck === true)
 				{
 					$checkformsend = true;
@@ -162,10 +178,8 @@
 			
 			if ($selection == 2 || $selection == 3) // Empfang , Senden / Empfangen
 			{
-				$checkformget = false;
 				if($countrequestvars > 15)
 					$countrequestvars = 15;
-				$reqvarvaluecheck = false;
 				// Action Vars
 				for ($i=1; $i<=$countrequestvars; $i++)
 				{
@@ -231,7 +245,7 @@
 				{
 					$VarID = $this->RegisterVariableBoolean($ident, $key, "~Switch", $i);
 				}
-			elseif ($type == "NULL")
+			else
 				{
 					$VarID = NULL;
 				}
@@ -263,7 +277,7 @@
 				}
 			elseif ($type == "NULL")
 				{
-					// nichts
+                    $this->SendDebug("IFTTT", "Vartype not known",0);
 				}
 				
 				return $VarID;
@@ -272,9 +286,16 @@
 		protected function WriteValues($valuesjson)
 		{
 			$this->SendDebug("Values from IFTTT",$valuesjson,0);
+            $selection = $this->ReadPropertyInteger("selection");
 			$values = json_decode($valuesjson);
+            $eventname = "IFTTTEvent";
 			if(isset($values->EventName))
 				$eventname = $values->EventName;
+            $countvalues = 0;
+            if(isset($values->Status))
+            {
+                $countvalues = 1;
+            }
 			if(isset($values->Value1))
 				{
 					$countvalues = 1;
@@ -292,8 +313,38 @@
 				}				
 			if(isset($values->OccurredAt))
 				$occurredat = $values->OccurredAt;
-			$countrequestvars = $this->ReadPropertyInteger('countrequestvars');
-			if ( $countvalues == $countrequestvars)
+            if($selection == 4)
+			{
+                $countrequestvars = 1;
+			}
+			else
+			{
+                $countrequestvars = $this->ReadPropertyInteger('countrequestvars');
+			}
+			if($selection == 4)
+			{
+                $scriptid = $this->ReadPropertyInteger("scriptid");
+                $modulrequest = $this->ReadPropertyBoolean("modulrequest1");
+                if($modulrequest == true)
+				{
+                    $i = 1;
+                    foreach ($values as $key => $value)
+                    {
+                        $type = gettype($value);// Typ prüfen
+                        $this->SetRequestVariable($key, $value, $type, $i);
+                        $i = $i+1;
+                    }
+				}
+				else
+				{
+                    $state = $values->Status;
+                    $this->SendDebug("IFTTT","Es wurde der Wert  ".$state." an das Skript mit der Objekt ID ".$scriptid." übergeben.",0);
+                    IPS_RunScriptEx($scriptid, Array("State" =>$state, "EventName" => $eventname));
+				}
+				return;
+			}
+
+			if ( $countvalues == $countrequestvars && $selection != 4)
 			{
 				$i = 1;
 				foreach ($values as $key => $value)
@@ -313,8 +364,7 @@
 								}
 								else
 								{
-									$this->SendDebug("IFTTT","Es wurde kein Wert für ".$value." gesetzt, Variablentyp stimmt nicht mit Wert überein.",0);
-									IPS_LogMessage("IFTTT:", "Es wurde kein Wert für ".$value." gesetzt, Variablentyp stimmt nicht mit Wert überein.");
+                                    $this->SendDebug("IFTTT",utf8_encode("Es wurde kein Wert für ".$value." gesetzt, Variablentyp stimmt nicht mit Wert überein."),0);
 								}
 							}
 						$i = $i+1;
@@ -322,9 +372,8 @@
 			}
 			else
 			{
-				$this->SendDebug("IFTTT","Die Anzahl der Variablen stimmt nicht mit der übermittelten Anzahl an Werten überein!",0);
+				$this->SendDebug("IFTTT",utf8_encode("Die Anzahl der Variablen stimmt nicht mit der übermittelten Anzahl an Werten überein!"),0);
 				$this->SendDebug("IFTTT","Es wurden keine Werte gesetzt.",0);
-				$this->SendDebug("IFTTT","Die Anzahl der Variablen stimmt nicht mit der übermittelten Anzahl an Werten überein!",0);
 			}
 		}
 		
@@ -586,6 +635,7 @@
 			$formstatus = $this->FormStatus();
 			$formsend = $this->FormSend($countsendvars);
 			$formget = $this->FormGet($countrequestvars);
+			$formgooglehome = $this->FormGoogleHome();
 			/*
 			if ($selection == 2)
 			{
@@ -626,6 +676,13 @@
 				$formactions = $this->FormActions(3, $countrequestvars);
 				return	'{ '.$formhead.','.$formsend.$formreturn.$formget.$formelementsend.'],'.$formactions.','.$formstatus.' }';
 			}
+
+			elseif ($selection == 4) // Google Home
+            {
+                $countrequestvars = 1;
+            	$formactions = $this->FormActions(4, $countrequestvars);
+                return	'{ '.$formhead.','.$formgooglehome.$formelementsend.'],'.$formactions.','.$formstatus.' }';
+            }
 		
 		}
 		
@@ -712,6 +769,24 @@
 			
 			return $form;
 		}
+
+        protected function FormGoogleHome()
+        {
+            $form = '{ "type": "Label", "label": "Google Home via IFTTT_______________________________________________________________________________________________" },
+			{ "type": "Label", "label": "configure the IFTTT Applet in IFTTT, details can be found below in the test enviroment" },
+			{ "type": "Label", "label": "two options are availible" },
+			{ "type": "Label", "label": "first option switch device via trigger a script" },
+			{ "type": "Label", "label": "Please select a script to trigger" },
+			{ "type": "SelectScript", "name": "scriptid", "caption": "Script Target" },
+			{ "type": "Label", "label": "second option leave field above empty and create variable" },
+			{ "type": "Label", "label": "click check mark for creating a new variable" },
+			{ "name": "modulrequest1", "type": "CheckBox", "caption": "module create variable for value" },';
+            return $form;
+        }
+
+        //{ "type": "Label", "label": "select a instance" },
+    	//{ "type": "SelectInstance", "name": "instanceid", "caption": "Instance" },
+
 		
 		protected function FormHead()
 		{
@@ -719,13 +794,14 @@
 	[
 		{ "type": "Label", "label": "Connection from IP-Symcon to IFTTT" },
 		{ "type": "Label", "label": "https://ifttt.com" },
-		{ "type": "Label", "label": "communication type with IFTTT: send, receive, send/receive" },
+		{ "type": "Label", "label": "communication type with IFTTT: send, receive, send/receive, Google Home" },
 		{ "type": "Select", "name": "selection", "caption": "communication",
     "options": [
         { "label": "Please select", "value": 0 },
         { "label": "Send", "value": 1 },
         { "label": "Receive", "value": 2 },
-        { "label": "Send/Receive", "value": 3 }
+        { "label": "Send/Receive", "value": 3 },
+        { "label": "Google Home", "value": 4 }
     ]
 }';
 			// End ]
@@ -739,9 +815,10 @@
 				$event = $this->ReadPropertyString('event');
 				$form = '"actions": [{ "type": "Label", "label": "IFTTT configuration:" },
 				{ "type": "Label", "label": "IFTTT This configuration:" },
-				{ "type": "Label", "label": " - Create a Recipe" },
+				{ "type": "Label", "label": " - Select My Applets" },
+				{ "type": "Label", "label": " - Push New Applet" },
 				{ "type": "Label", "label": " - push this" },
-				{ "type": "Label", "label": " - choose Maker Channel" },
+				{ "type": "Label", "label": " - choose Webhooks" },
 				{ "type": "Label", "label": " - Receive a webrequest" },
 				{ "type": "Label", "label": " - Event Name: '.$event.'" },
 				{ "type": "Label", "label": " - Create Trigger" },
@@ -824,13 +901,40 @@
 				{ "type": "Button", "label": "Trigger Event", "onClick": "IFTTT_TriggerEvent($id);" } ]';
 				return  $form;
 			}
+			elseif ($type == 4) // Google Home
+            {
+                $form = '"actions": [{ "type": "Label", "label": "IFTTT configuration:" },
+				{ "type": "Label", "label": "IFTTT This configuration:" },
+				{ "type": "Label", "label": " - Select My Applets" },
+				{ "type": "Label", "label": " - Push New Applet" },
+				{ "type": "Label", "label": " - push this" },
+				{ "type": "Label", "label": " - choose Google Assistant" },
+				{ "type": "Label", "label": " - choose Say a simple phrase" },
+				{ "type": "Label", "label": " - complete from and then push Create Trigger" },
+				{ "type": "Label", "label": " - push that" },
+				{ "type": "Label", "label": " - choose Action Service Webhooks" },
+				{ "type": "Label", "label": " - push Make a web request" },
+				{ "type": "Label", "label": " - URL:" },
+				{ "type": "Label", "label": "     '.$this->GetIPSConnect().'/hook/IFTTT" },
+				{ "type": "Label", "label": " - Method:" },
+				{ "type": "Label", "label": "     POST " },
+				{ "type": "Label", "label": " - Content Type:" },
+				{ "type": "Label", "label": "     application/json" },
+				{ "type": "Label", "label": " - Body: (example)" },
+				{ "type": "Label", "label": "     {\"username\":\"'.$this->IFTTTConfigAuthUser().'\",\"password\":\"'.$this->IFTTTConfigAuthPassword().'\",\"objectid\":'.$this->InstanceID.',\"values\":{\"EventName\": \"Living Room\",\"Status\":false<<<}>>>}" },
+				{ "type": "Label", "label": "     EventName, choose name vor this event, this is also the variable name if the variable is created in IP-Symcon" },
+				{ "type": "Label", "label": "     Status, false turn device off, true turns device on" },
+				{ "type": "Label", "label": "     put keys always inside \"\", string value inside \"\", boolean, integer and float values without \"\"" },	
+				{ "type": "Label", "label": "     webhhookusername , set username in IFTTT IO" },
+				{ "type": "Label", "label": "     webhookpassword, set individual password in IFTTT IO" } ]';
+                return  $form;
+            }
 		}
 			
 		protected function IFTTTConfigRequest($countrequestvars)
 		{
-			$webhooksettings =	GetUsernamePassword();
-			$username = $webhooksettings["username"];
-			$password = $webhooksettings["password"];
+			$username = $this->IFTTTConfigAuthUser();
+			$password = $this->IFTTTConfigAuthPassword();
 			if ($countrequestvars == 0)
 			{
 				$form =  '{ "type": "Label", "label": "         values  please select at least one value" }';
@@ -853,7 +957,6 @@
 		{
 			$webhooksettings =	$this->GetUsernamePassword();
 			$username = $webhooksettings["username"];
-			$password = $webhooksettings["password"];
 			return $username;
 		}
 		
@@ -863,6 +966,7 @@
 			$password = $webhooksettings["password"];
 			return $password;
 		}
+
 		
 		protected function FormStatus()
 		{
@@ -910,6 +1014,11 @@
                     "code": 209,
                     "icon": "error",
                     "caption": "Event field must not be empty."
+                },
+                {
+                    "code": 280,
+                    "icon": "error",
+                    "caption": "please complete script id field."
                 }
 			
             ]';
@@ -960,19 +1069,17 @@
 			}
 			return $form;
 		}
-		
-	
+
 		// IP-Symcon Connect auslesen
 		protected function GetIPSConnect()
 		{
-			$InstanzenListe = IPS_GetInstanceListByModuleID("{9486D575-BE8C-4ED8-B5B5-20930E26DE6F}");
-			foreach ($InstanzenListe as $InstanzID) {
-				$ConnectControl = $InstanzID;
-			} 
-			$connectinfo = CC_GetUrl($ConnectControl);
+            $ipsymconconnectid = IPS_GetInstanceListByModuleID("{9486D575-BE8C-4ED8-B5B5-20930E26DE6F}")[0];
+            $connectinfo = CC_GetUrl($ipsymconconnectid);
 			if ($connectinfo == false || $connectinfo == "")
-				$connectinfo = 'https://<IP-Symcon Connect>.ipmagic.de';
-			$connectinfo = "https://123456789abcdefgh.ipmagic.de";
+			{
+                //	$connectinfo = 'https://<IP-Symcon Connect>.ipmagic.de';
+                $connectinfo = "https://123456789abcdefgh.ipmagic.de";
+			}
 			return $connectinfo;
 		}
 		
