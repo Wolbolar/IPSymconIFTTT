@@ -221,7 +221,7 @@ Die Daten werden als JSON an IP-Symcon geschickt.
 
 | Eigenschaft| Wert                                                                                                          |
 | :--------: | :-----------------------------------------------------------------------------------------------------------: |	
-|URL:        | https://<IP-Symon Connect Adresse>.ipmagic.de/hook/IFTTT                                                      |
+|URL:        | https:// _IP-Symon Connect Adresse_ .ipmagic.de/hook/IFTTT                                                      |
 |Method:     | _POST_                                                                                                        |
 |Content Type|  _application/json_                                                                                           |  
 |Body        |  {"username":"ipsymcon","password":"mypassword","objectid":12345,"values":{"EventName":"{{EventName}}",       |
@@ -271,7 +271,7 @@ Wie oben bereits beschrieben hier das gleiche Vorgehen
 
 | Eigenschaft| Wert                                                                                                                                 |
 | :--------: | :----------------------------------------------------------------------------------------------------------------------------------: |	
-|URL:        | https://<IP-Symon Connect Adresse>.ipmagic.de/hook/IFTTT                                                                             |
+|URL:        | https:// _IP-Symon Connect Adresse_ .ipmagic.de/hook/IFTTT                                                                           |
 |Method:     | _POST_                                                                                                                               |
 |Content Type|  _application/json_                                                                                                                  |  
 |Body        |  {"username":"ipsymcon","password":"meinpasswort","objectid":12345,"values":{"EventName": "Wohnzimmer Licht","Status":true<<<}>>>}   |
