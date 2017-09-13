@@ -291,28 +291,10 @@
             $eventname = "IFTTTEvent";
 			if(isset($values->EventName))
 				$eventname = $values->EventName;
-            $countvalues = 0;
-            if(isset($values->Status))
-            {
-                $countvalues = 1;
-            }
-			if(isset($values->Value1))
-				{
-					$countvalues = 1;
-					$value1 = $values->Value1;
-				}	
-			if(isset($values->Value2))
-				{
-					$countvalues = 2;
-					$value2 = $values->Value2;
-				}	
-			if(isset($values->Value3))
-				{
-					$countvalues = 3;
-					$value3 = $values->Value3;
-				}				
-			if(isset($values->OccurredAt))
-				$occurredat = $values->OccurredAt;
+
+            $valuesarr = json_decode($valuesjson, true);
+            $countvalues  = count($valuesarr);
+            
             if($selection == 4)
 			{
                 $countrequestvars = 1;
@@ -364,7 +346,7 @@
 								}
 								else
 								{
-                                    $this->SendDebug("IFTTT",utf8_encode("Es wurde kein Wert für ".$value." gesetzt, Variablentyp stimmt nicht mit Wert überein."),0);
+                                    $this->SendDebug("IFTTT","Es wurde kein Wert für ".$value." gesetzt, Variablentyp stimmt nicht mit Wert überein.",0);
 								}
 							}
 						$i = $i+1;
@@ -372,7 +354,7 @@
 			}
 			else
 			{
-				$this->SendDebug("IFTTT",utf8_encode("Die Anzahl der Variablen stimmt nicht mit der übermittelten Anzahl an Werten überein!"),0);
+				$this->SendDebug("IFTTT","Die Anzahl der Variablen stimmt nicht mit der übermittelten Anzahl an Werten überein!",0);
 				$this->SendDebug("IFTTT","Es wurden keine Werte gesetzt.",0);
 			}
 		}

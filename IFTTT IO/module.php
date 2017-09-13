@@ -274,12 +274,21 @@ IFTTTIO_ProcessHookDataOLD('.$this->InstanceID.');
 				{
 				header('HTTP/1.0 401 Unauthorized');
 				$this->SendDebug("IFTTT I/O:","Access denied",0);
+				if($username != $webhookusername)
+                {
+                    $this->SendDebug("IFTTT I/O:","webhook username does not match with ".$username,0);
+                }
+				if($password != $webhookpassword)
+                {
+                    $this->SendDebug("IFTTT I/O:","webhook password does not match with ".$password,0);
+                }
+
 				echo "Authorization required";
 				return;
 				}
 			$objectid = $data->objectid;
 			$values = $data->values;
-			$this->SendDebug("IFTTT I/O:",utf8_decode($iftttjson)." empfangen.",0);
+			$this->SendDebug("IFTTT I/O:",$iftttjson." empfangen.",0);
 			$this->SendJSON($data);
 		}
 	
@@ -308,17 +317,24 @@ IFTTTIO_ProcessHookDataOLD('.$this->InstanceID.');
 		$data = json_decode($iftttjson);
 		$username = $data->username;
 		$password = $data->password;
-			
+        $this->SendDebug("IFTTT I/O:",$iftttjson." empfangen.",0);
 		if(($username != $webhookusername) || ($password != $webhookpassword))
 			{
 			header('HTTP/1.0 401 Unauthorized');
 			$this->SendDebug("IFTTT I/O:","Access denied",0);
+                if($username != $webhookusername)
+                {
+                    $this->SendDebug("IFTTT I/O:","webhook username does not match with ".$username,0);
+                }
+                if($password != $webhookpassword)
+                {
+                    $this->SendDebug("IFTTT I/O:","webhook password does not match with ".$password,0);
+                }
 			echo "Authorization required";
 			return;
 			}
 		$objectid = $data->objectid;
 		$values = $data->values;
-		$this->SendDebug("IFTTT I/O:",utf8_decode($iftttjson)." empfangen.",0);
 		$this->SendJSON($data);	
 	}
 	
