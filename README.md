@@ -254,17 +254,17 @@ Auf die Variablen können wir dann in IP-Symcon ein Ereigniss legen das z.B. bei
 weitere Dinge in IP-Symcon ausführt. Auf diese Weise lässt das ein oder andere in IP-Symcon einbinden für das es derzeit noch keine Skripte
 oder Module gibt.
 
-##### Google Home als Aktion (That) eines Applets	
+##### Google Home als Aktion (This) eines Applets	
 Wenn wir Google Home zum Schalten eines Geräts in IP-Symcon benutzten wollen benutzten wir den Google Assistant Service als This Teil des Applets. Das Applet schickt dann Daten von IFTTT an
 IP-Symcon wenn eine Aktion durch Google Home getriggert wird.
 	
-Zunächst wird ein Trigger (This) erstellt mit dem Service der den _This_ (IF) Anteil des Applets stellen soll (s.o.).
+Zunächst wird ein Trigger (This) erstellt mit dem _Google Assistant_ Service.
 	
 Wie oben bereits beschrieben hier das gleiche Vorgehen
 - _*New Applet*_
 - _*This*_ auswählen
 - _Google Assistant_ Service auswählen
-- Zum Einschalten eines geräts wählen wir _Say a simple phrase_ und füllen dort die Formulierung ein auf die Google Home reagieren soll
+- Zum Einschalten eines Geräts wählen wir _Say a simple phrase_ und füllen dort die Formulierung ein auf die Google Home reagieren soll
 - Als _That_ wählen wir _Webhooks_ Service
 - Hier tragen wir folgendes ein
 
@@ -309,6 +309,63 @@ $state = $_IPS['State'];
 ```
 
 Es wird der Wert in der Variable _**$_IPS['State']**_ an das Skript übergeben.
+
+Die zweite Möglichkeit besteht darin das Modul eine Variable anlegen zu lassen, auf diese Variable kann dann ein Ereignis gelegt werden das ein weiteres Gerät schaltet.
+
+
+###### Beispiel Google Home zur Rollladen Steuerung	
+
+Zunächst wird ein Trigger (This) erstellt mit dem _Google Assistant_ Service.
+	
+Wie oben bereits beschrieben hier das gleiche Vorgehen
+- _*New Applet*_
+- _*This*_ auswählen
+- _Google Assistant_ Service auswählen
+- Zum Steuerung des Rollladen wählen wir _Say a phrase with a number_ und füllen dort die Formulierung ein auf die Google Home reagieren soll
+
+![google assistent1](docs/googleassistant1.png?raw=true "google assistent1")
+
+![google assistent2](docs/googleassistant2.png?raw=true "google assistent2")
+
+- dann auf _Create Trigger_ drücken
+- Als _That_ wählen wir _Webhooks_ Service
+- Hier tragen wir folgendes ein
+
+
+| Eigenschaft| Wert                                                                                                                                 |
+| :--------: | :----------------------------------------------------------------------------------------------------------------------------------: |	
+|URL:        | https:// _IP-Symon Connect Adresse_ .ipmagic.de/hook/IFTTT                                                                           |
+|Method:     | _POST_                                                                                                                               |
+|Content Type|  _application/json_                                                                                                                  |  
+|Body        |  {"username":"ipsymcon","password":"meinpasswort","objectid":12345,"values":{"Level": {{NumberField}}<<<}>>>}                        |
+Folgende Daten werden erwartet:
+
+| Wert                  | Erläuterung                                                                                                   |
+| :-------------------: | :-----------------------------------------------------------------------------------------------------------: |
+|\[_username_\]         | Username im IFTTT IO wird auch in der Testumgebung der Instanz angezeigt                                      |
+|\[_password_\]         | Passwort im IFTTT IO wird auch in der Testumgebung der Instanz angezeigt                                      |
+|_objectid_             | ObjektID der IFTTT Instanz die die Daten entgegen nehmen soll                                                 |
+|_Level_                | name des Variable, wird in IP-Symcon als Variablenname gesetzt wenn das Modul die Variable anlegen sollte     |
+
+![google assistent3](docs/googleassistant3.png?raw=true "google assistent3")
+
+In IP-Symcon wählen wir _Google Home_ als Option im Konfigurationsformular.
+
+![google home](docs/google-home-form.png?raw=true "google home")
+ 
+Es gibt zwei Möglichkeiten, die erste ist es ein Skript zu starten, dieses wird im Konfigurationsformualr ausgewählt.
+
+Ein einfachen Skript könnte so aussehen
+
+```php
+<?
+$level = $_IPS['Level'];
+$hm_level = $level/100;
+HM_WriteValueBoolean(12345, "LEVEL", $hm_level);
+?>
+```
+
+Es wird der Wert in der Variable _**$_IPS['Level']**_ an das Skript übergeben.
 
 Die zweite Möglichkeit besteht darin das Modul eine Variable anlegen zu lassen, auf diese Variable kann dann ein Ereignis gelegt werden das ein weiteres Gerät schaltet.
 

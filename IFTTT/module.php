@@ -319,9 +319,21 @@
 				}
 				else
 				{
-                    $state = $values->Status;
-                    $this->SendDebug("IFTTT","Es wurde der Wert  ".$state." an das Skript mit der Objekt ID ".$scriptid." übergeben.",0);
-                    IPS_RunScriptEx($scriptid, Array("State" =>$state, "EventName" => $eventname));
+                    // state
+                    if(isset($values->Status))
+					{
+                        $state = $values->Status;
+                        $this->SendDebug("IFTTT","Es wurde der State Wert  ".$state." an das Skript mit der Objekt ID ".$scriptid." übergeben.",0);
+                        IPS_RunScriptEx($scriptid, Array("State" =>$state, "EventName" => $eventname));
+					}
+
+                    // level
+                    if(isset($values->Level))
+					{
+                        $level = $values->Level;
+                        $this->SendDebug("IFTTT","Es wurde der Level Wert  ".$level." an das Skript mit der Objekt ID ".$scriptid." übergeben.",0);
+                        IPS_RunScriptEx($scriptid, Array("Level" =>$level, "EventName" => $eventname));
+					}
 				}
 				return;
 			}
