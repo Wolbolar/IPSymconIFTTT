@@ -314,10 +314,29 @@ IFTTTIO_ProcessHookDataOLD('.$this->InstanceID.');
 
 		# Capture JSON content
 		$iftttjson = file_get_contents('php://input');
-		$data = json_decode($iftttjson);
-		$username = $data->username;
-		$password = $data->password;
         $this->SendDebug("IFTTT I/O:",$iftttjson." empfangen.",0);
+		$data = json_decode($iftttjson);
+		if(isset($data->username))
+        {
+            $username = $data->username;
+            $this->SendDebug("IFTTT I/O:","username: ".$username,0);
+        }
+		else
+        {
+            $username = false;
+            $this->SendDebug("IFTTT I/O:","no username ",0);
+        }
+        if(isset($data->password))
+        {
+            $password = $data->password;
+            $this->SendDebug("IFTTT I/O:","password: ".$password,0);
+        }
+        else
+        {
+            $password = false;
+            $this->SendDebug("IFTTT I/O:","no password",0);
+        }
+
 		if(($username != $webhookusername) || ($password != $webhookpassword))
 			{
 			header('HTTP/1.0 401 Unauthorized');

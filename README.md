@@ -338,6 +338,7 @@ Wie oben bereits beschrieben hier das gleiche Vorgehen
 |Method:     | _POST_                                                                                                                               |
 |Content Type|  _application/json_                                                                                                                  |  
 |Body        |  {"username":"ipsymcon","password":"meinpasswort","objectid":12345,"values":{"Level": {{NumberField}}<<<}>>>}                        |
+
 Folgende Daten werden erwartet:
 
 | Wert                  | Erläuterung                                                                                                   |
