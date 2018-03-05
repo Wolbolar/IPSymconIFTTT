@@ -417,8 +417,8 @@ aktuelle Passwort wird in der Testumgebung der IFTTT Instanz angezeigt zur Konfi
 
 | Eigenschaft | Typ     | Standardwert | Funktion                                                        |
 | :---------: | :-----: | :----------: | :-------------------------------------------------------------: |
-| username    | string  | 		       | username für Microsoft Flow zur Authentifizierung bei IP-Symcon |
-| password    | string  |              | password für Microsoft Flow zur Authentifizierung bei IP-Symcon |
+| username    | string  | 		       | username für IFTTT zur Authentifizierung bei IP-Symcon |
+| password    | string  |              | password für IFTTT zur Authentifizierung bei IP-Symcon |
 
 username und password sind vorab eingestellt können aber individuell angepasst werden.
 
