@@ -64,7 +64,7 @@ class IFTTTIO extends IPSModule
 		$this->SendDataToChildren(json_encode(Array("DataID" => "{BC2FAD9D-C92E-4CFA-ADA5-79A56DA5D2F7}", "Buffer" => $data))); //IFTTT I/O RX GUI
 	}
 
-	public function SendEventTrigger(string $iftttmakerkey, string $event, string $value1, string $value2, string $value3)
+	public function SendEventTrigger(string $iftttmakerkey, string $event, string $value1, string $value2 = "", string $value3 = "")
 	{
 
 		$data = array("value1" => $value1, "value2" => $value2, "value3" => $value3);
@@ -99,16 +99,30 @@ class IFTTTIO extends IPSModule
 			try {
 				$iftttmakerkey = $command->iftttmakerkey;
 				$event = $command->event;
-				$values = $command->values;
-				$value1 = $values->value1;
-				$value2 = $values->value2;
-				$value3 = $values->value3;
 				$this->SendDebug("IFTTT I/O:", "Trigger IFTTT Event " . utf8_decode($event), 0);
+				$values = $command->values;
+				$this->SendDebug("IFTTT I/O:", "Trigger IFTTT values " . json_encode($values), 0);
+				$value1 = $values->value1;
+				if(is_null($value1))
+				{
+					$value1 = "";
+				}
+				$value2 = $values->value2;
+				if(is_null($value2))
+				{
+					$value2 = "";
+				}
+				$value3 = $values->value3;
+				if(is_null($value3))
+				{
+					$value3 = "";
+				}
 
-				$result = $this->SendEventTrigger($iftttmakerkey, $event, $value1, $value2, $value3);
 				$iftttpayload = array("value1" => $value1, "value2" => $value2, "value3" => $value3);
 				$data_string = json_encode($iftttpayload);
-				$this->SendDebug("IFTTT I/O:", utf8_decode($data_string) . " gesendet.", 0);
+				$this->SendDebug("IFTTT I/O:", utf8_decode($data_string) . " senden.", 0);
+				$result = $this->SendEventTrigger($iftttmakerkey, $event, $value1, $value2, $value3);
+
 			} catch (Exception $exc) {
 				// Senden fehlgeschlagen
 				$this->unlock("EventSend");

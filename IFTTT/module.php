@@ -446,6 +446,8 @@ class IFTTT extends IPSModule
 
 
 		$values_string = json_encode($values);
+		$this->SendDebug("IFTTT", "Send trigger event ".$event, 0);
+		$this->SendDebug("IFTTT", "Send trigger with values ".$values_string, 0);
 		$iftttreturn = $this->SendEventTriggerVar1to3($iftttmakerkey, $event, $values_string);
 		return $iftttreturn;
 	}
