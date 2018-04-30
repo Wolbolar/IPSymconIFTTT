@@ -64,8 +64,16 @@ class IFTTTIO extends IPSModule
 		$this->SendDataToChildren(json_encode(Array("DataID" => "{BC2FAD9D-C92E-4CFA-ADA5-79A56DA5D2F7}", "Buffer" => $data))); //IFTTT I/O RX GUI
 	}
 
-	public function SendEventTrigger(string $iftttmakerkey, string $event, string $value1, string $value2 = "", string $value3 = "")
+	public function SendEventTrigger(string $iftttmakerkey, string $event, string $value1, string $value2 = NULL, string $value3 = NULL)
 	{
+		if(is_null($value2))
+		{
+			$value2 = "";
+		}
+		if(is_null($value3))
+		{
+			$value3 = "";
+		}
 
 		$data = array("value1" => $value1, "value2" => $value2, "value3" => $value3);
 		$data_string = json_encode($data);
