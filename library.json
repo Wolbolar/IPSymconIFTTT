@@ -1,12 +1,13 @@
 {
 	"id": "{1DA49A4F-0B05-47F8-949F-52B922B042FB}",
-	"description": "IFTTT Modul",
-	"tags": "IFTTT",
-	"req_ips_version": "4.1",
 	"author": "Fonzo",
 	"name": "IPSymconIFTTT",
 	"url": "www.ip-symcon.de",
+	"compatibility": {
+		"version": "4.2",
+		"date": 1491343200
+	},
 	"version": "0.6",
-	"build": 0,
+	"build": 1,
 	"date": 0
 }
