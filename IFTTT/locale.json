@@ -4,7 +4,7 @@
 			"Connection from IP-Symcon to IFTTT": "Verbindung von IP-Symcon zu IFTTT",
 			"communication type with IFTTT: send, receive, send/receive, Google Home":"Auswahl Kommunikationstyp mit IFTTT: Senden, Empfangen, Senden/Empfangen, Google Home",
 			"communication":"Kommunikation",
-			"Please select":"Auswahl treffen",
+			"Please Select":"Auswahl treffen",
 			"Send":"Senden",
 			"Receive":"Empfangen",
 			"Send/Receive":"Senden/Empfangen",
@@ -87,7 +87,7 @@
 			" - push Make a web request":" - Make a web request auswählen",
 			" - continue with That of your choice":" - fortfahren mit dem That der Wahl",
 			"configure the IFTTT Applet in IFTTT, details can be found below in the test enviroment":"Konfiguriere das IFTTT Applet in IFTTT, Details sind in der Testumgebung unten zu finden",
-			"two options are availible":"Zwei Optionen sind verfügbar",
+			"two options are available":"Zwei Optionen sind verfügbar",
 			"first option switch device":"Erste Option das Gerät direkt schalten",
 			"Please complete field with the command that is triggert bei the IFTTT Event. For example for Homematic \"HM_WriteValueBoolean(12345, \"STATE\", true);\"":"Bitte das Feld mit der ausführenden Funktion zum Schalten des Gerätes ergänzen die beim Event durch IFTTT ausgelöst werden soll. Als Beispiel für Homematic \"HM_WriteValueBoolean(12345, \"STATE\", true);\"",
 			"first option switch device via trigger a script":"Erste Option ein Gerät schalten indem ein Skript getriggert wird",
@@ -99,15 +99,22 @@
 			"module create variable for value":"Instanz legt eine Variable an",
 			"IFTTT That configuration: ":"IFTTT That Konfiguration: ",
 			" - URL:":" - URL:",
-			"     EventName, choose name vor this event, this is also the variable name if the variable is created in IP-Symcon":"     EventName, einen Namen für das Event aussuchen, der Name wird auch als Variablenname in IP-Symcon gesetzt",
+			"     EventName, choose name for this event, this is also the variable name if the variable is created in IP-Symcon":"     EventName, einen Namen für das Event aussuchen, der Name wird auch als Variablenname in IP-Symcon gesetzt",
 			"     Status, false turn device off, true turns device on":"     Status, false schaltet das gerät aus, true schaltet das Gerät ein",
 			"     put keys always inside \"\", string value inside \"\", boolean, integer and float values without \"\"":"     Die Schlüssel (Bezeichner) immer in \"\" setzten, String Werte in \"\" setzten, Boolean, Integer und Float Werte ohne \"\"",
 			"     webhhookusername , set username in IFTTT IO":"     webhhookusername , Benutzernamen im IFTTT IO setzten",
 			"     webhookpassword, set individual password in IFTTT IO":"     webhookpassword, individuelles Passwort im IFTTT IO setzten",
 			"please complete script id field.":"Bitte Feld mit Skript ID ausfüllen.",
-			"IFTTT maker key not valid.": "IFTTT Maker Key enthält Sonderzeichen."
-			
-			
+			"IFTTT maker key not valid.": "IFTTT Maker Key enthält Sonderzeichen.",
+			"select number of values in module.": "Bitte die Anzahl der Werte im Modul festlegen.",
+			"special errorcode.": "spezieller error code.",
+			"event not valid.": "Event nicht gültig",
+			"     example values begin and end with curly brackets": "Beispiel Werte sind von \"\" umschlossen",
+			" - Authentification:": " - Authentifizierung:",
+			"     EventName, choose name vor this event, this is also the variable name if the variable is created in IP-Symcon": "     EventName, bitte einen Namen für das Event aussuchen, dies ist gleichzeitig der Variablenname wenn die Variable von IP-Symcon angelegt wird",
+			"     show advanced options": "     show advanced options (erweitere Optionen anzeigen)",
+			"     username (standard ipsymcon), set username in IFTTT IO": "     username (Standard ipsymcon), den Benutzernamen im IFTTT IO einstellen",
+			"     password is set, for individual password set password in IFTTT IO": "     Passwort ist gesetzt, bitte ein individuelles Passwort im IFTTT IO einstellen"
 		}
 	}
 }

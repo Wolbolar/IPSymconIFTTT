@@ -353,7 +353,7 @@ class IFTTT extends IPSModule
 			return false;
 		}
 	}
-	
+
 
 	/**
 	 * This function will be available automatically after the module is imported with the module control.
@@ -421,8 +421,8 @@ class IFTTT extends IPSModule
 
 
 		$values_string = json_encode($values);
-		$this->SendDebug("IFTTT", "Send trigger event ".$event, 0);
-		$this->SendDebug("IFTTT", "Send trigger with values ".$values_string, 0);
+		$this->SendDebug("IFTTT", "Send trigger event " . $event, 0);
+		$this->SendDebug("IFTTT", "Send trigger with values " . $values_string, 0);
 		$iftttreturn = $this->SendEventTriggerVar1to3($iftttmakerkey, $event, $values_string);
 		return $iftttreturn;
 	}
@@ -524,6 +524,10 @@ class IFTTT extends IPSModule
 	 */
 	protected function FormHead()
 	{
+		$form = [];
+		$selection = $this->ReadPropertyInteger("selection");
+		$countsendvars = $this->ReadPropertyInteger("countsendvars");
+		$countrequestvars = $this->ReadPropertyInteger("countrequestvars");
 		$form = [
 			[
 				'type' => 'Label',
@@ -566,151 +570,293 @@ class IFTTT extends IPSModule
 
 			]
 		];
-
-		return $form;
-	}
-
-
-
-
-
-	//Configuration Form
-	public function GetConfigurationForm1()
-	{
-		$selection = $this->ReadPropertyInteger("selection");
-		$countsendvars = $this->ReadPropertyInteger("countsendvars");
-		$countrequestvars = $this->ReadPropertyInteger("countrequestvars");
-		$formhead = $this->FormHead();
-		$formstatus = $this->FormStatus();
-		$formsend = $this->FormSend($countsendvars);
-		$formget = $this->FormGet($countrequestvars);
-		$formgooglehome = $this->FormGoogleHome();
-		/*
-		if ($selection == 2)
-		{
-			$formget = substr($this->FormGet($countrequestvars), 0, -1); // letztes Komma entfernen
-		}
-		else
-		{
-			$formget = $this->FormGet($countrequestvars);
-		}
-		*/
-		$formreturn = '{ "type": "Label", "label": "Return Message from IFTTT" },
-				{
-					"name": "iftttreturn",
-					"type": "CheckBox",
-					"caption": "IFTTT Return"
-				},';
-		$formelementsend = '{ "type": "Label", "label": "__________________________________________________________________________________________________" }';
-
 		if ($selection == 0)// keine Auswahl
 		{
-			return '{ ' . $formhead . '],' . $formstatus . ' }';
+			$this->SendDebug("IFTTT", "No selection", 0);
 		} elseif ($selection == 1) // Senden
 		{
-			$formactions = $this->FormActions(1, $countrequestvars);
-			return '{ ' . $formhead . ',' . $formsend . $formreturn . $formelementsend . '],' . $formactions . ',' . $formstatus . ' }';
+			$form = array_merge_recursive(
+				$form, [
+				[
+					'type' => 'ExpansionPanel',
+					'caption' => 'IFTTT This',
+					'items' => $this->FormSend($countsendvars)
+				]
+			]
+			);
+			$form = array_merge_recursive(
+				$form,  [
+				[
+					'type' => 'ExpansionPanel',
+					'caption' => 'IFTTT Return Message',
+					'items' => $this->IFTTTReturnMessage()
+				]
+			]
+			);
 		} elseif ($selection == 2) // Empfangen
 		{
-			$formactions = $this->FormActions(2, $countrequestvars);
-			return '{ ' . $formhead . ',' . $formget . $formelementsend . '],' . $formactions . ',' . $formstatus . ' }';
+			$form = array_merge_recursive(
+				$form, [
+				[
+					'type' => 'ExpansionPanel',
+					'caption' => 'IFTTT That',
+					'items' => $this->FormGet($countrequestvars)
+				]
+			]
+			);
 		} elseif ($selection == 3) // Senden / Empfangen
 		{
-			$formactions = $this->FormActions(3, $countrequestvars);
-			return '{ ' . $formhead . ',' . $formsend . $formreturn . $formget . $formelementsend . '],' . $formactions . ',' . $formstatus . ' }';
+			$form = array_merge_recursive(
+				$form, [
+					[
+						'type' => 'ExpansionPanel',
+						'caption' => 'IFTTT This',
+						'items' => $this->FormSend($countsendvars)
+					]
+				]
+			);
+			$form = array_merge_recursive(
+				$form, [
+					[
+						'type' => 'ExpansionPanel',
+						'caption' => 'IFTTT Return Message',
+						'items' => $this->IFTTTReturnMessage()
+					]
+				]
+			);
+			$form = array_merge_recursive(
+				$form, [
+					[
+						'type' => 'ExpansionPanel',
+						'caption' => 'IFTTT That',
+						'items' => $this->FormGet($countrequestvars)
+					]
+				]
+			);
 		} elseif ($selection == 4) // Google Home
 		{
-			$countrequestvars = 1;
-			$formactions = $this->FormActions(4, $countrequestvars);
-			return '{ ' . $formhead . ',' . $formgooglehome . $formelementsend . '],' . $formactions . ',' . $formstatus . ' }';
+			$form = array_merge_recursive(
+				$form, [
+				[
+					'type' => 'ExpansionPanel',
+					'caption' => 'Google Home via IFTTT',
+					'items' => $this->FormGoogleHome()
+				]
+			]
+			);
 		}
-
+		return $form;
 	}
 
 	protected function FormSend($countsendvars)
 	{
-		$form = '{ "type": "Label", "label": "IFTTT This____________________________________________________________________________________________" },
-			{ "type": "Label", "label": "IFTTT maker key (look in IFTTT maker channel)" },
-		{ "name": "iftttmakerkey", "type": "ValidationTextBox", "caption": "IFTTT maker key" },
-		{ "type": "Label", "label": "please choose an event name (no special characters or blank)" },
-		{ "name": "event", "type": "ValidationTextBox", "caption": "event name" },
-		{ "type": "Label", "label": "number of variables for IFTTT This (max 3)" },
-		{ "type": "NumberSpinner", "name": "countsendvars", "caption": "number of variables" },'
-			. $this->FormSendVars($countsendvars);
-		return $form;
-	}
+		$form = [
+			[
+				'type' => 'Label',
+				'caption' => 'IFTTT maker key (look in IFTTT maker channel)'
+			],
+			[
+				'name' => 'iftttmakerkey',
+				'type' => 'ValidationTextBox',
+				'caption' => 'IFTTT maker key'
+			],
+			[
+				'type' => 'Label',
+				'caption' => 'please choose an event name (no special characters or blank)'
+			],
+			[
+				'name' => 'event',
+				'type' => 'ValidationTextBox',
+				'caption' => 'event name'
+			],
+			[
+				'type' => 'Label',
+				'caption' => 'number of variables for IFTTT This (max 3)'
+			],
+			[
+				'name' => 'countsendvars',
+				'type' => 'NumberSpinner',
+				'caption' => 'number of variables'
+			]
+		];
 
-	protected function FormSendVars($countsendvars)
-	{
 		if ($countsendvars > 0) {
 			if ($countsendvars > 3)
 				$countsendvars = 3;
-			$form = '{ "type": "Label", "label": "variables with values for IFTTT" },';
+			$form = array_merge_recursive(
+				$form, [
+					[
+						'type' => 'Label',
+						'caption' => 'variables with values for IFTTT'
+					]
+				]
+			);
 			for ($i = 1; $i <= $countsendvars; $i++) {
-				$form .= '{ "type": "SelectVariable", "name": "varvalue' . $i . '", "caption": "value ' . $i . '" },';
+				$form = array_merge_recursive(
+					$form, [
+						[
+							'name' => 'varvalue' . $i,
+							'type' => 'SelectVariable',
+							'caption' => 'value ' . $i
+						]
+					]
+				);
 			}
-			$form .= '{ "type": "Label", "label": "alternative leave variable empty und click check mark" },';
+			$form = array_merge_recursive(
+				$form, [
+					[
+						'type' => 'Label',
+						'caption' => 'alternative leave variable empty und click check mark'
+					]
+				]
+			);
 			for ($i = 1; $i <= $countsendvars; $i++) {
-				$form .= '{
-						"name": "modulinput' . $i . '",
-						"type": "CheckBox",
-						"caption": "use modul value ' . $i . '"
-					},	
-			{ "name": "value' . $i . '", "type": "ValidationTextBox", "caption": "value ' . $i . '" },';
+				$form = array_merge_recursive(
+					$form, [
+						[
+							'name' => 'modulinput' . $i,
+							'type' => 'CheckBox',
+							'caption' => 'use modul value ' . $i
+						],
+						[
+							'name' => 'value' . $i,
+							'type' => 'ValidationTextBox',
+							'caption' => 'value ' . $i
+						]
+					]
+				);
 			}
-		} else {
-			$form = "";
 		}
+		return $form;
+	}
 
+	private function IFTTTReturnMessage()
+	{
+		$form = [
+			[
+				'type' => 'Label',
+				'caption' => 'Return Message from IFTTT'
+			],
+			[
+				'name' => 'iftttreturn',
+				'type' => 'CheckBox',
+				'caption' => 'IFTTT Return'
+			]
+		];
 		return $form;
 	}
 
 	protected function FormGet($countrequestvars)
 	{
-		$form = '{ "type": "Label", "label": "IFTTT That_______________________________________________________________________________________________" },
-			{ "type": "Label", "label": "variables with values for IFTTT That" },
-			{ "type": "Label", "label": "number of variables for a IFTTT That (max 15)" },
-			{ "type": "NumberSpinner", "name": "countrequestvars", "caption": "number of variables" },'
-			. $this->FormGetVars($countrequestvars);
-		return $form;
-	}
-
-	protected function FormGetVars($countrequestvars)
-	{
+		$form = [
+			[
+				'type' => 'Label',
+				'caption' => 'variables with values for IFTTT That'
+			],
+			[
+				'type' => 'Label',
+				'caption' => 'number of variables for a IFTTT That (max 15)'
+			],
+			[
+				'name' => 'countrequestvars',
+				'type' => 'NumberSpinner',
+				'caption' => 'number of variables'
+			],
+			[
+				'type' => 'Label',
+				'caption' => 'please choose an event name (no special characters or blank)'
+			],
+			[
+				'name' => 'event',
+				'type' => 'ValidationTextBox',
+				'caption' => 'event name'
+			],
+			[
+				'type' => 'Label',
+				'caption' => 'number of variables for IFTTT This (max 3)'
+			],
+			[
+				'name' => 'countsendvars',
+				'type' => 'NumberSpinner',
+				'caption' => 'number of variables'
+			]
+		];
 		if ($countrequestvars > 0) {
 			if ($countrequestvars > 15)
 				$countrequestvars = 15;
-			$form = '';
+
 			for ($i = 1; $i <= $countrequestvars; $i++) {
-				$form .= '{ "type": "SelectVariable", "name": "requestvarvalue' . $i . '", "caption": "value ' . $i . '" },';
+				$form = array_merge_recursive(
+					$form, [
+						[
+							'name' => 'requestvarvalue' . $i,
+							'type' => 'SelectVariable',
+							'caption' => 'value ' . $i
+						]
+					]
+				);
 			}
-			$form .= '{ "type": "Label", "label": "alternative leave variable empty und click check mark for creating a new variable" },';
+			$form = array_merge_recursive(
+				$form, [
+					[
+						'type' => 'Label',
+						'caption' => 'alternative leave variable empty und click check mark for creating a new variable'
+					]
+				]
+			);
 			for ($i = 1; $i <= $countrequestvars; $i++) {
-				$form .= '{
-						"name": "modulrequest' . $i . '",
-						"type": "CheckBox",
-						"caption": "module create variable for value ' . $i . '"
-					},';
+				$form = array_merge_recursive(
+					$form, [
+						[
+							'name' => 'modulrequest' . $i,
+							'type' => 'CheckBox',
+							'caption' => 'module create variable for value ' . $i
+						]
+					]
+				);
 			}
-		} else {
-			$form = "";
 		}
-
-
 		return $form;
 	}
 
 	protected function FormGoogleHome()
 	{
-		$form = '{ "type": "Label", "label": "Google Home via IFTTT_______________________________________________________________________________________________" },
-			{ "type": "Label", "label": "configure the IFTTT Applet in IFTTT, details can be found below in the test enviroment" },
-			{ "type": "Label", "label": "two options are availible" },
-			{ "type": "Label", "label": "first option switch device via trigger a script" },
-			{ "type": "Label", "label": "Please select a script to trigger" },
-			{ "type": "SelectScript", "name": "scriptid", "caption": "Script Target" },
-			{ "type": "Label", "label": "second option leave field above empty and create variable" },
-			{ "type": "Label", "label": "click check mark for creating a new variable" },
-			{ "name": "modulrequest1", "type": "CheckBox", "caption": "module create variable for value" },';
+		$form = [
+			[
+				'type' => 'Label',
+				'caption' => 'configure the IFTTT Applet in IFTTT, details can be found below in the test enviroment'
+			],
+			[
+				'type' => 'Label',
+				'caption' => 'two options are available'
+			],
+			[
+				'type' => 'Label',
+				'caption' => 'first option switch device via trigger a script'
+			],
+			[
+				'type' => 'Label',
+				'caption' => 'Please select a script to trigger'
+			],
+			[
+				'name' => 'scriptid',
+				'type' => 'SelectScript',
+				'caption' => 'Script Target'
+			],
+			[
+				'type' => 'Label',
+				'caption' => 'second option leave field above empty and create variable'
+			],
+			[
+				'type' => 'Label',
+				'caption' => 'click check mark for creating a new variable'
+			],
+			[
+				'name' => 'modulrequest1',
+				'type' => 'CheckBox',
+				'caption' => 'module create variable for value'
+			]
+		];
 		return $form;
 	}
 
@@ -721,150 +867,460 @@ class IFTTT extends IPSModule
 	 */
 	protected function FormActions()
 	{
-		$form = [
-			[
-				'type' => 'Button',
-				'caption' => 'On',
-				'onClick' => 'Nanoleaf_On($id);'
-			],
-			[
-				'type' => 'Button',
-				'caption' => 'Off',
-				'onClick' => 'Nanoleaf_Off($id);'
-			],
-			[
-				'type' => 'Button',
-				'caption' => 'Get Nanoleaf info',
-				'onClick' => 'Nanoleaf_GetInfo($id);'
-			],
-			[
-				'type' => 'Button',
-				'caption' => 'Update Effects',
-				'onClick' => 'Nanoleaf_UpdateEffectProfile($id);'
-			]
-		];
+		$selection = $this->ReadPropertyInteger("selection");
+		// $countrequestvars = $this->ReadPropertyInteger("countrequestvars");
+		$event = $this->ReadPropertyString('event');
+		if ($selection == 0)// keine Auswahl
+		{
+			$form = [];
+		} elseif ($selection == 1) // Senden
+		{
+			$form = [
+				[
+					'type' => 'Label',
+					'caption' => 'IFTTT configuration:'
+				],
+				[
+					'type' => 'ExpansionPanel',
+					'caption' => 'IFTTT This configuration:',
+					'items' => [
+						[
+							'type' => 'Label',
+							'caption' => ' - Select My Applets'
+						],
+						[
+							'type' => 'Label',
+							'caption' => ' - Push New Applet'
+						],
+						[
+							'type' => 'Label',
+							'caption' => ' - push this'
+						],
+						[
+							'type' => 'Label',
+							'caption' => ' - choose Webhooks'
+						],
+						[
+							'type' => 'Label',
+							'caption' => ' - Receive a webrequest'
+						],
+						[
+							'type' => 'Label',
+							'caption' => ' - Event Name: ' . $event
+						],
+						[
+							'type' => 'Label',
+							'caption' => ' - Create Trigger'
+						],
+						[
+							'type' => 'Label',
+							'caption' => ' - continue with That of your choice'
+						]
+					]
+				],
+				[
+					'type' => 'Label',
+					'caption' => '______________________________________________________________________________________________________'
+				],
+				[
+					'type' => 'Label',
+					'caption' => 'Trigger IFTTT Event'
+				],
+				[
+					'type' => 'Button',
+					'caption' => 'Trigger Event',
+					'onClick' => 'IFTTT_TriggerEvent($id);'
+				]
+			];
+		} elseif ($selection == 2) // Empfangen
+		{
+			$form = [
+				[
+					'type' => 'Label',
+					'caption' => 'IFTTT configuration:'
+				],
+				[
+					'type' => 'ExpansionPanel',
+					'caption' => 'IFTTT That configuration:',
+					'items' => [
+						[
+							'type' => 'Label',
+							'caption' => ' - Method:'
+						],
+						[
+							'type' => 'Label',
+							'caption' => '     POST '
+						],
+						[
+							'type' => 'Label',
+							'caption' => ' - URI:'
+						],
+						[
+							'type' => 'Label',
+							'caption' => '     ' . $this->GetIPSConnect() . '/hook/IFTTT'
+						],
+						[
+							'type' => 'Label',
+							'caption' => ' - Header:'
+						],
+						[
+							'type' => 'Label',
+							'caption' => '     {'
+						],
+						[
+							'type' => 'Label',
+							'caption' => '      "charset":"utf-8",'
+						],
+						[
+							'type' => 'Label',
+							'caption' => '      "Content-Type":"application/json",'
+						],
+						[
+							'type' => 'Label',
+							'caption' => '     }'
+						],
+						[
+							'type' => 'Label',
+							'caption' => ' - Body: (example)'
+						],
+						[
+							'type' => 'Label',
+							'caption' => '     {'
+						],
+						[
+							'type' => 'Label',
+							'caption' => '     {"objectid":' . $this->InstanceID . ',"values":{"keyvalue1":"value1string","keyvalue2":value2float,"keyvalue3":value3int,"keyvalue4":value4bool}}'
+						],
+						[
+							'type' => 'Label',
+							'caption' => '     }'
+						],
+						[
+							'type' => 'Label',
+							'caption' => '     example values begin and end with curly brackets'
+						],
+						[
+							'type' => 'Label',
+							'caption' => '     put keys always inside "", string value inside "", boolean, integer and float values without ""'
+						],
+						[
+							'type' => 'Label',
+							'caption' => '     show advanced options'
+						],
+						[
+							'type' => 'Label',
+							'caption' => '     username (standard ipsymcon), set username in IFTTT IO'
+						],
+						[
+							'type' => 'Label',
+							'caption' => '     password is set, for individual password set password in IFTTT IO'
+						],
+						[
+							'type' => 'Label',
+							'caption' => ' - Authentification:'
+						],
+						[
+							'type' => 'Label',
+							'caption' => '     {'
+						],
+						[
+							'type' => 'Label',
+							'caption' => '      "type":"Basic",'
+						],
+						[
+							'type' => 'Label',
+							'caption' => '      "username":"' . $this->IFTTTConfigAuthUser() . '",'
+						],
+						[
+							'type' => 'Label',
+							'caption' => '      "password":"' . $this->IFTTTConfigAuthPassword() . '",'
+						],
+						[
+							'type' => 'Label',
+							'caption' => '     }'
+						]
+					]
+				]
+			];
+		} elseif ($selection == 3) // Senden / Empfangen
+		{
+			$form = [
+				[
+					'type' => 'Label',
+					'caption' => 'IFTTT configuration:'
+				],
+				[
+					'type' => 'ExpansionPanel',
+					'caption' => 'IFTTT This configuration:',
+					'items' => [
+						[
+							'type' => 'Label',
+							'caption' => 'IFTTT This configuration:'
+						],
+						[
+							'type' => 'Label',
+							'caption' => ' - Select My Applets'
+						],
+						[
+							'type' => 'Label',
+							'caption' => ' - Push New Applet'
+						],
+						[
+							'type' => 'Label',
+							'caption' => ' - push this'
+						],
+						[
+							'type' => 'Label',
+							'caption' => ' - choose Webhooks'
+						],
+						[
+							'type' => 'Label',
+							'caption' => ' - Receive a webrequest'
+						],
+						[
+							'type' => 'Label',
+							'caption' => ' - Event Name: ' . $event
+						],
+						[
+							'type' => 'Label',
+							'caption' => ' - Create Trigger'
+						],
+						[
+							'type' => 'Label',
+							'caption' => ' - continue with That of your choice'
+						]
+					]
+				],
+				[
+					'type' => 'ExpansionPanel',
+					'caption' => 'IFTTT That configuration:',
+					'items' => [
+						[
+							'type' => 'Label',
+							'caption' => ' - Method:'
+						],
+						[
+							'type' => 'Label',
+							'caption' => '     POST '
+						],
+						[
+							'type' => 'Label',
+							'caption' => ' - URI:'
+						],
+						[
+							'type' => 'Label',
+							'caption' => '     ' . $this->GetIPSConnect() . '/hook/IFTTT'
+						],
+						[
+							'type' => 'Label',
+							'caption' => ' - Header:'
+						],
+						[
+							'type' => 'Label',
+							'caption' => '     {'
+						],
+						[
+							'type' => 'Label',
+							'caption' => '      "charset":"utf-8",'
+						],
+						[
+							'type' => 'Label',
+							'caption' => '      "Content-Type":"application/json",'
+						],
+						[
+							'type' => 'Label',
+							'caption' => '     }'
+						],
+						[
+							'type' => 'Label',
+							'caption' => ' - Body: (example)'
+						],
+						[
+							'type' => 'Label',
+							'caption' => '     {'
+						],
+						[
+							'type' => 'Label',
+							'caption' => '     {"objectid":' . $this->InstanceID . ',"values":{"keyvalue1":"value1string","keyvalue2":value2float,"keyvalue3":value3int,"keyvalue4":value4bool}}'
+						],
+						[
+							'type' => 'Label',
+							'caption' => '     }'
+						],
+						[
+							'type' => 'Label',
+							'caption' => '     example values begin and end with curly brackets'
+						],
+						[
+							'type' => 'Label',
+							'caption' => '     put keys always inside "", string value inside "", boolean, integer and float values without ""'
+						],
+						[
+							'type' => 'Label',
+							'caption' => '     show advanced options'
+						],
+						[
+							'type' => 'Label',
+							'caption' => '     username (standard ipsymcon), set username in IFTTT IO'
+						],
+						[
+							'type' => 'Label',
+							'caption' => '     password is set, for individual password set password in IFTTT IO'
+						],
+						[
+							'type' => 'Label',
+							'caption' => ' - Authentification:'
+						],
+						[
+							'type' => 'Label',
+							'caption' => '     {'
+						],
+						[
+							'type' => 'Label',
+							'caption' => '      "type":"Basic",'
+						],
+						[
+							'type' => 'Label',
+							'caption' => '      "username":"' . $this->IFTTTConfigAuthUser() . '",'
+						],
+						[
+							'type' => 'Label',
+							'caption' => '      "password":"' . $this->IFTTTConfigAuthPassword() . '",'
+						],
+						[
+							'type' => 'Label',
+							'caption' => '     }'
+						]
+					]
+				],
+				[
+					'type' => 'Label',
+					'caption' => '______________________________________________________________________________________________________'
+				],
+				[
+					'type' => 'Label',
+					'caption' => 'Trigger IFTTT Event'
+				],
+				[
+					'type' => 'Button',
+					'caption' => 'Trigger Event',
+					'onClick' => 'IFTTT_TriggerEvent($id);'
+				]
+			];
+		} elseif ($selection == 4) // Google Home
+		{
+			$form = [
+				[
+					'type' => 'Label',
+					'caption' => 'IFTTT configuration:'
+				],
+				[
+					'type' => 'ExpansionPanel',
+					'caption' => 'IFTTT This configuration:',
+					'items' => [
+						[
+							'type' => 'Label',
+							'caption' => ' - Select My Applets'
+						],
+						[
+							'type' => 'Label',
+							'caption' => ' - Push New Applet'
+						],
+						[
+							'type' => 'Label',
+							'caption' => ' - push this'
+						],
+						[
+							'type' => 'Label',
+							'caption' => ' - choose Google Assistant'
+						],
+						[
+							'type' => 'Label',
+							'caption' => ' - choose Say a simple phrase'
+						],
+						[
+							'type' => 'Label',
+							'caption' => ' - complete from and then push Create Trigger'
+						],
+						[
+							'type' => 'Label',
+							'caption' => ' - push that'
+						],
+						[
+							'type' => 'Label',
+							'caption' => ' - choose Action Service Webhooks'
+						],
+						[
+							'type' => 'Label',
+							'caption' => ' - push Make a web request'
+						],
+						[
+							'type' => 'Label',
+							'caption' => ' - choose Action Service Webhooks'
+						],
+						[
+							'type' => 'Label',
+							'caption' => ' - URL:'
+						],
+						[
+							'type' => 'Label',
+							'caption' => '     ' . $this->GetIPSConnect() . '/hook/IFTTT'
+						],
+						[
+							'type' => 'Label',
+							'caption' => ' - choose Action Service Webhooks'
+						],
+						[
+							'type' => 'Label',
+							'caption' => ' - Method:'
+						],
+						[
+							'type' => 'Label',
+							'caption' => '     POST '
+						],
+						[
+							'type' => 'Label',
+							'caption' => ' - Content Type:'
+						],
+						[
+							'type' => 'Label',
+							'caption' => '     application/json'
+						],
+						[
+							'type' => 'Label',
+							'caption' => ' - Body: (example)'
+						],
+						[
+							'type' => 'Label',
+							'caption' => '     {"username":"' . $this->IFTTTConfigAuthUser() . '","password":"' . $this->IFTTTConfigAuthPassword() . '","objectid":' . $this->InstanceID . ',"values":{"EventName": "Living Room","Status":false<<<}>>>}'
+						],
+						[
+							'type' => 'Label',
+							'caption' => '     EventName, choose name for this event, this is also the variable name if the variable is created in IP-Symcon'
+						],
+						[
+							'type' => 'Label',
+							'caption' => '     Status, false turn device off, true turns device on'
+						],
+						[
+							'type' => 'Label',
+							'caption' => '     put keys always inside "", string value inside "", boolean, integer and float values without ""'
+						],
+						[
+							'type' => 'Label',
+							'caption' => '     webhhookusername , set username in IFTTT IO'
+						],
+						[
+							'type' => 'Label',
+							'caption' => '     webhookpassword, set individual password in IFTTT IO'
+						]
+					]
+				]
+			];
+		}
 		return $form;
 	}
 
-
-	protected function FormActions1($type, $countrequestvars)
-	{
-		if ($type == 1) // Senden
-		{
-			$event = $this->ReadPropertyString('event');
-			$form = '"actions": [{ "type": "Label", "label": "IFTTT configuration:" },
-				{ "type": "Label", "label": "IFTTT This configuration:" },
-				{ "type": "Label", "label": " - Select My Applets" },
-				{ "type": "Label", "label": " - Push New Applet" },
-				{ "type": "Label", "label": " - push this" },
-				{ "type": "Label", "label": " - choose Webhooks" },
-				{ "type": "Label", "label": " - Receive a webrequest" },
-				{ "type": "Label", "label": " - Event Name: ' . $event . '" },
-				{ "type": "Label", "label": " - Create Trigger" },
-				{ "type": "Label", "label": " - continue with That of your choice" },
-				{ "type": "Label", "label": "______________________________________________________________________________________________________" },
-				{ "type": "Label", "label": "Trigger IFTTT Event" },
-				{ "type": "Button", "label": "Trigger Event", "onClick": "IFTTT_TriggerEvent($id);" } ]';
-			return $form;
-		} elseif ($type == 2) // Empfangen
-		{
-			$form = '"actions": [ { "type": "Label", "label": "IFTTT That configuration: " },
-				{ "type": "Label", "label": " - Method:" },
-				{ "type": "Label", "label": "     POST " },
-				{ "type": "Label", "label": " - URI:" },
-				{ "type": "Label", "label": "     ' . $this->GetIPSConnect() . '/hook/IFTTT" },
-				{ "type": "Label", "label": " - Header:" },
-				{ "type": "Label", "label": "     {" },
-				{ "type": "Label", "label": "      \"charset\":\"utf-8\"," },
-				{ "type": "Label", "label": "      \"Content-Type\":\"application/json\"," },
-				{ "type": "Label", "label": "     }" },
-				{ "type": "Label", "label": " - Body: (example)" },
-				{ "type": "Label", "label": "     {" },
-				{ "type": "Label", "label": "     {\"objectid\":' . $this->InstanceID . ',\"values\":{\"keyvalue1\":\"value1string\",\"keyvalue2\":value2float,\"keyvalue3\":value3int,\"keyvalue4\":value4bool}}"},
-				{ "type": "Label", "label": "     }" },
-				{ "type": "Label", "label": "     example values begin and end with curly brackets" },
-				{ "type": "Label", "label": "     put keys always inside \"\", string value inside \"\", boolean, integer and float values without \"\"" },	
-				{ "type": "Label", "label": "     show advanced options" },
-				{ "type": "Label", "label": "     username (standard ipsymcon), set username in IFTTT IO" },
-				{ "type": "Label", "label": "     password is set, for individual password set password in IFTTT IO" },
-				{ "type": "Label", "label": " - Authentification:" },
-				{ "type": "Label", "label": "     {" },
-				{ "type": "Label", "label": "      \"type\":\"Basic\"," },
-				{ "type": "Label", "label": "      \"username\":\"' . $this->IFTTTConfigAuthUser() . '\"," },
-				{ "type": "Label", "label": "      \"password\":\"' . $this->IFTTTConfigAuthPassword() . '\"," },
-				{ "type": "Label", "label": "     }" } ]';
-			return $form;
-		} elseif ($type == 3) // Senden / Empfangen
-		{
-			$event = $this->ReadPropertyString('event');
-			$form = '"actions": [ { "type": "Label", "label": "IFTTT configuration:" },
-				{ "type": "Label", "label": "IFTTT This configuration:" },
-				{ "type": "Label", "label": " - Create a Recipe" },
-				{ "type": "Label", "label": " - push this" },
-				{ "type": "Label", "label": " - choose Maker Channel" },
-				{ "type": "Label", "label": " - Receive a webrequest" },
-				{ "type": "Label", "label": " - Event Name: ' . $event . '" },
-				{ "type": "Label", "label": " - Create Trigger" },
-				{ "type": "Label", "label": " - continue with That of your choice" },
-				{ "type": "Label", "label": "______________________________________________________________________________________________________" },
-				{ "type": "Label", "label": "IFTTT That configuration: " },
-				{ "type": "Label", "label": " - Method:" },
-				{ "type": "Label", "label": "     POST " },
-				{ "type": "Label", "label": " - URI:" },
-				{ "type": "Label", "label": "     ' . $this->GetIPSConnect() . '/hook/IFTTT" },
-				{ "type": "Label", "label": " - Header:" },
-				{ "type": "Label", "label": "     {" },
-				{ "type": "Label", "label": "      \"charset\":\"utf-8\"," },
-				{ "type": "Label", "label": "      \"Content-Type\":\"application/json\"" },
-				{ "type": "Label", "label": "     }" },
-				{ "type": "Label", "label": " - Body: (example)" },
-				{ "type": "Label", "label": "     {" },
-				{ "type": "Label", "label": "       \"objectid\":' . $this->InstanceID . ',\"values\":{\"keyvalue1\":\"value1string\",\"keyvalue2\":value2float,\"keyvalue3\":value3int,\"keyvalue4\":value4bool}"},
-				{ "type": "Label", "label": "     }" },
-				{ "type": "Label", "label": "     example values begin and end with curly brackets" },
-				{ "type": "Label", "label": "     put keys always inside \"\", string value inside \"\", boolean, integer and float values without \"\"" },
-				{ "type": "Label", "label": "     show advanced options" },
-				{ "type": "Label", "label": "     username (standard ipsymcon), set username in IFTTT IO" },
-				{ "type": "Label", "label": "     password is set, for individual password set password in IFTTT IO" },
-				{ "type": "Label", "label": " - Authentification:" },
-				{ "type": "Label", "label": "     {" },
-				{ "type": "Label", "label": "      \"type\":\"Basic\"," },
-				{ "type": "Label", "label": "      \"username\":\"' . $this->IFTTTConfigAuthUser() . '\"," },
-				{ "type": "Label", "label": "      \"password\":\"' . $this->IFTTTConfigAuthPassword() . '\"" },
-				{ "type": "Label", "label": "     }" },
-				{ "type": "Label", "label": "______________________________________________________________________________________________________" },
-				{ "type": "Label", "label": "Trigger IFTTT Event" },
-				{ "type": "Button", "label": "Trigger Event", "onClick": "IFTTT_TriggerEvent($id);" } ]';
-			return $form;
-		} elseif ($type == 4) // Google Home
-		{
-			$form = '"actions": [{ "type": "Label", "label": "IFTTT configuration:" },
-				{ "type": "Label", "label": "IFTTT This configuration:" },
-				{ "type": "Label", "label": " - Select My Applets" },
-				{ "type": "Label", "label": " - Push New Applet" },
-				{ "type": "Label", "label": " - push this" },
-				{ "type": "Label", "label": " - choose Google Assistant" },
-				{ "type": "Label", "label": " - choose Say a simple phrase" },
-				{ "type": "Label", "label": " - complete from and then push Create Trigger" },
-				{ "type": "Label", "label": " - push that" },
-				{ "type": "Label", "label": " - choose Action Service Webhooks" },
-				{ "type": "Label", "label": " - push Make a web request" },
-				{ "type": "Label", "label": " - URL:" },
-				{ "type": "Label", "label": "     ' . $this->GetIPSConnect() . '/hook/IFTTT" },
-				{ "type": "Label", "label": " - Method:" },
-				{ "type": "Label", "label": "     POST " },
-				{ "type": "Label", "label": " - Content Type:" },
-				{ "type": "Label", "label": "     application/json" },
-				{ "type": "Label", "label": " - Body: (example)" },
-				{ "type": "Label", "label": "     {\"username\":\"' . $this->IFTTTConfigAuthUser() . '\",\"password\":\"' . $this->IFTTTConfigAuthPassword() . '\",\"objectid\":' . $this->InstanceID . ',\"values\":{\"EventName\": \"Living Room\",\"Status\":false<<<}>>>}" },
-				{ "type": "Label", "label": "     EventName, choose name vor this event, this is also the variable name if the variable is created in IP-Symcon" },
-				{ "type": "Label", "label": "     Status, false turn device off, true turns device on" },
-				{ "type": "Label", "label": "     put keys always inside \"\", string value inside \"\", boolean, integer and float values without \"\"" },	
-				{ "type": "Label", "label": "     webhhookusername , set username in IFTTT IO" },
-				{ "type": "Label", "label": "     webhookpassword, set individual password in IFTTT IO" } ]';
-			return $form;
-		}
-	}
 
 	protected function IFTTTConfigRequest($countrequestvars)
 	{
@@ -1075,7 +1531,7 @@ class IFTTT extends IPSModule
 	}
 
 	//Add this Polyfill for IP-Symcon 4.4 and older
-	protected function SetValue(string $Ident, $Value)
+	protected function SetValue($Ident, $Value)
 	{
 
 		if (IPS_GetKernelVersion() >= 5) {
