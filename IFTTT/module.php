@@ -31,6 +31,9 @@ class IFTTT extends IPSModule
 			$this->RegisterPropertyBoolean("modulrequest" . $i, false);
 		}
 		$this->RegisterPropertyBoolean("iftttreturn", false);
+
+		//we will wait until the kernel is ready
+		$this->RegisterMessage(0, IPS_KERNELMESSAGE);
 	}
 
 	public function ApplyChanges()
@@ -38,9 +41,9 @@ class IFTTT extends IPSModule
 		//Never delete this line!
 		parent::ApplyChanges();
 
-		//IFTTT Request ! Problem Maker kann nicht an IP Connect schicken
-		//$idstring = $this->RegisterVariableString("IFTTTRequest", "IFTTT Request", "~String", 2);
-		//IPS_SetHidden($idstring, true);
+		if (IPS_GetKernelRunlevel() !== KR_READY) {
+			return;
+		}
 
 
 		$this->ValidateConfiguration();
@@ -178,6 +181,27 @@ class IFTTT extends IPSModule
 		} elseif ($selection == 3 && $checkformsend == true && $checkformget == true) // Senden / Empfangen
 		{
 			$this->SetStatus(102);
+		}
+	}
+
+	public function MessageSink($TimeStamp, $SenderID, $Message, $Data)
+	{
+
+		switch ($Message) {
+			case IM_CHANGESTATUS:
+				if ($Data[0] === IS_ACTIVE) {
+					$this->ApplyChanges();
+				}
+				break;
+
+			case IPS_KERNELMESSAGE:
+				if ($Data[0] === KR_READY) {
+					$this->ApplyChanges();
+				}
+				break;
+
+			default:
+				break;
 		}
 	}
 
@@ -329,56 +353,7 @@ class IFTTT extends IPSModule
 			return false;
 		}
 	}
-
-	protected function SetupDataScript()
-	{
-		//prüfen ob Script existent
-		$SkriptID = @$this->GetIDForIdent("IFTTTGetData");
-
-		if ($SkriptID === false) {
-			$SkriptID = $this->RegisterScript("IFTTTGetData", "IFTTT Get Data", $this->CreateDataScript(), 3);
-			IPS_SetHidden($SkriptID, true);
-			$this->SetIFTTTDataEvent($SkriptID);
-		} else {
-			$this->SendDebug("IFTTT", "script id is: " . $SkriptID, 0);
-		}
-	}
-
-	protected function SetIFTTTDataEvent(integer $SkriptID)
-	{
-		//prüfen ob Event existent
-		$ParentID = $SkriptID;
-
-		$EreignisID = @($this->GetIDForIdent('EventIFTTTGetData'));
-		if ($EreignisID === false) {
-			$EreignisID = IPS_CreateEvent(0);
-			IPS_SetName($EreignisID, "Event IFTTT Get Data");
-			IPS_SetIdent($EreignisID, "EventIFTTTGetData");
-			IPS_SetEventTrigger($EreignisID, 0, $this->GetIDForIdent('IFTTTRequest'));   //bei Variablenaktualisierung
-			IPS_SetParent($EreignisID, $ParentID);
-			IPS_SetEventActive($EreignisID, true);             //Ereignis aktivieren
-		} else {
-			$this->SendDebug("IFTTT", "event id is: " . $EreignisID, 0);
-		}
-	}
-
-	protected function CreateDataScript()
-	{
-		$Script = '<?
- $iftttdatajson = GetValueString(' . $this->GetIDForIdent("IFTTTRequest") . ');
- $iftttdata = json_decode($iftttdatajson); // Standard Objekt
- //$iftttdata = json_decode($iftttdatajson, true); // Array
- 
- //Standard Objekt oder Array auslesen
- foreach ($iftttdata as $key=>$data)
- {
- 	 echo "Key: ".$key." => Value: ".$data."\n";
-	 //add command here
- }
- ?>';
-		return $Script;
-	}
-
+	
 
 	/**
 	 * This function will be available automatically after the module is imported with the module control.
@@ -524,8 +499,83 @@ class IFTTT extends IPSModule
 		}
 	}
 
-	//Configuration Form
+
+	/***********************************************************
+	 * Configuration Form
+	 ***********************************************************/
+
+	/**
+	 * build configuration form
+	 * @return string
+	 */
 	public function GetConfigurationForm()
+	{
+		// return current form
+		return json_encode([
+			'elements' => $this->FormHead(),
+			'actions' => $this->FormActions(),
+			'status' => $this->FormStatus()
+		]);
+	}
+
+	/**
+	 * return form configurations on configuration step
+	 * @return array
+	 */
+	protected function FormHead()
+	{
+		$form = [
+			[
+				'type' => 'Label',
+				'caption' => 'Connection from IP-Symcon to IFTTT'
+			],
+			[
+				'type' => 'Label',
+				'caption' => 'https://ifttt.com'
+			],
+			[
+				'type' => 'Label',
+				'caption' => 'communication type with IFTTT: send, receive, send/receive, Google Home'
+			],
+			[
+				'type' => 'Select',
+				'name' => 'selection',
+				'caption' => 'communication',
+				'options' => [
+					[
+						'label' => 'Please Select',
+						'value' => 0
+					],
+					[
+						'label' => 'Send',
+						'value' => 1
+					],
+					[
+						'label' => 'Receive',
+						'value' => 2
+					],
+					[
+						'label' => 'Send/Receive',
+						'value' => 3
+					],
+					[
+						'label' => 'Google Home',
+						'value' => 4
+					]
+				]
+
+			]
+		];
+
+		return $form;
+	}
+
+
+
+
+
+	//Configuration Form
+	public function GetConfigurationForm1()
 	{
 		$selection = $this->ReadPropertyInteger("selection");
 		$countsendvars = $this->ReadPropertyInteger("countsendvars");
@@ -664,31 +714,40 @@ class IFTTT extends IPSModule
 		return $form;
 	}
 
-	//{ "type": "Label", "label": "select a instance" },
-	//{ "type": "SelectInstance", "name": "instanceid", "caption": "Instance" },
 
-
-	protected function FormHead()
+	/**
+	 * return form actions by token
+	 * @return array
+	 */
+	protected function FormActions()
 	{
-		$form = '"elements":
-	[
-		{ "type": "Label", "label": "Connection from IP-Symcon to IFTTT" },
-		{ "type": "Label", "label": "https://ifttt.com" },
-		{ "type": "Label", "label": "communication type with IFTTT: send, receive, send/receive, Google Home" },
-		{ "type": "Select", "name": "selection", "caption": "communication",
-    "options": [
-        { "label": "Please select", "value": 0 },
-        { "label": "Send", "value": 1 },
-        { "label": "Receive", "value": 2 },
-        { "label": "Send/Receive", "value": 3 },
-        { "label": "Google Home", "value": 4 }
-    ]
-}';
-		// End ]
+		$form = [
+			[
+				'type' => 'Button',
+				'caption' => 'On',
+				'onClick' => 'Nanoleaf_On($id);'
+			],
+			[
+				'type' => 'Button',
+				'caption' => 'Off',
+				'onClick' => 'Nanoleaf_Off($id);'
+			],
+			[
+				'type' => 'Button',
+				'caption' => 'Get Nanoleaf info',
+				'onClick' => 'Nanoleaf_GetInfo($id);'
+			],
+			[
+				'type' => 'Button',
+				'caption' => 'Update Effects',
+				'onClick' => 'Nanoleaf_UpdateEffectProfile($id);'
+			]
+		];
 		return $form;
 	}
 
-	protected function FormActions($type, $countrequestvars)
+
+	protected function FormActions1($type, $countrequestvars)
 	{
 		if ($type == 1) // Senden
 		{
@@ -836,102 +895,128 @@ class IFTTT extends IPSModule
 		return $password;
 	}
 
-
+	/**
+	 * return from status
+	 * @return array
+	 */
 	protected function FormStatus()
 	{
-		$form = '"status":
-            [
-                {
-                    "code": 101,
-                    "icon": "inactive",
-                    "caption": "Creating instance."
-                },
-				{
-                    "code": 102,
-                    "icon": "active",
-                    "caption": "IFTTT created."
-                },
-				' . $this->FormStatusErrorSelectorEnterThat() . '
-                {
-                    "code": 104,
-                    "icon": "inactive",
-                    "caption": "interface closed."
-                },
-				{
-                    "code": 201,
-                    "icon": "inactive",
-                    "caption": "select number of values in module."
-                },
-				' . $this->FormStatusErrorSelectorEnter() . '
-				{
-                    "code": 206,
-                    "icon": "error",
-                    "caption": "IFTTT maker field must not be empty."
-                },
-				' . $this->FormStatusErrorMissingValueinField() . '
-				{
-                    "code": 207,
-                    "icon": "error",
-                    "caption": "event not valid."
-                },
-				{
-                    "code": 208,
-                    "icon": "error",
-                    "caption": "IFTTT maker key not valid."
-                },
-				{
-                    "code": 209,
-                    "icon": "error",
-                    "caption": "Event field must not be empty."
-                },
-                {
-                    "code": 280,
-                    "icon": "error",
-                    "caption": "please complete script id field."
-                }
-			
-            ]';
+		$form = [
+			[
+				'code' => 101,
+				'icon' => 'inactive',
+				'caption' => 'Creating instance.'
+			],
+			[
+				'code' => 102,
+				'icon' => 'active',
+				'caption' => 'IFTTT created.'
+			],
+			[
+				'code' => 104,
+				'icon' => 'inactive',
+				'caption' => 'interface closed.'
+			],
+			[
+				'code' => 201,
+				'icon' => 'inactive',
+				'caption' => 'select number of values in module.'
+			],
+			[
+				'code' => 202,
+				'icon' => 'error',
+				'caption' => 'special errorcode.'
+			],
+			[
+				'code' => 206,
+				'icon' => 'error',
+				'caption' => 'IFTTT maker field must not be empty.'
+			],
+			[
+				'code' => 207,
+				'icon' => 'error',
+				'caption' => 'event not valid.'
+			],
+			[
+				'code' => 208,
+				'icon' => 'error',
+				'caption' => 'IFTTT maker key not valid.'
+			],
+			[
+				'code' => 209,
+				'icon' => 'error',
+				'caption' => 'Event field must not be empty.'
+			],
+			[
+				'code' => 280,
+				'icon' => 'error',
+				'caption' => 'please complete script id field.'
+			]
+		];
+		$form = array_merge_recursive(
+			$form, $this->FormStatusErrorSelectorEnterThat()
+		);
+		$form = array_merge_recursive(
+			$form, $this->FormStatusErrorSelectorEnter()
+		);
+		$form = array_merge_recursive(
+			$form, $this->FormStatusErrorMissingValueinField()
+		);
+
 		return $form;
 	}
 
+
 	protected function FormStatusErrorSelectorEnter() // errorid 221 - 223
 	{
-		$form = "";
+		$form = [];
 		for ($i = 1; $i <= 3; $i++) {
 			$errorid = 220 + $i;
-			$form .= '{
-                    "code": ' . $errorid . ',
-                    "icon": "error",
-                    "caption": "IFTTT IF: select a value ' . $i . ' or enter value ' . $i . ' in module."
-                },';
+			$form = array_merge_recursive(
+				$form, [
+					[
+						'code' => $errorid,
+						'icon' => 'error',
+						'caption' => 'IFTTT IF: select a value ' . $i . ' or enter value ' . $i . ' in module.'
+					]
+				]
+			);
 		}
 		return $form;
 	}
 
 	protected function FormStatusErrorMissingValueinField() // errorid 241 - 243
 	{
-		$form = "";
+		$form = [];
 		for ($i = 1; $i <= 3; $i++) {
 			$errorid = 240 + $i;
-			$form .= '{
-                    "code": ' . $errorid . ',
-                    "icon": "error",
-                    "caption": "IFTTT IF: missing value, enter value in field value ' . $i . '"
-                },';
+			$form = array_merge_recursive(
+				$form, [
+					[
+						'code' => $errorid,
+						'icon' => 'error',
+						'caption' => 'IFTTT IF: missing value, enter value in field value ' . $i
+					]
+				]
+			);
 		}
 		return $form;
 	}
 
 	protected function FormStatusErrorSelectorEnterThat() // errorid 261 - 275
 	{
-		$form = "";
+		$form = [];
 		for ($i = 1; $i <= 15; $i++) {
 			$errorid = 260 + $i;
-			$form .= '{
-                    "code": ' . $errorid . ',
-                    "icon": "error",
-                    "caption": "IFTTT That: select a value ' . $i . ' or enter value ' . $i . ' in module."
-                },';
+			$form = array_merge_recursive(
+				$form, [
+					[
+						'code' => $errorid,
+						'icon' => 'error',
+						'caption' => 'IFTTT That: select a value ' . $i . ' or enter value ' . $i . ' in module.'
+					]
+				]
+			);
 		}
 		return $form;
 	}
@@ -990,7 +1075,7 @@ class IFTTT extends IPSModule
 	}
 
 	//Add this Polyfill for IP-Symcon 4.4 and older
-	protected function SetValue($Ident, $Value)
+	protected function SetValue(string $Ident, $Value)
 	{
 
 		if (IPS_GetKernelVersion() >= 5) {
