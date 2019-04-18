@@ -17,14 +17,15 @@ class IFTTTSplitter extends IPSModule
     {
 	//Never delete this line!
         parent::ApplyChanges();
-       
-		$ParentID = $this->GetParent();
-					
+        
 		// Wenn I/O verbunden ist
-		if ($this->HasActiveParent($ParentID))
+		if ($this->HasActiveParent())
 			{
 				$this->SetStatus(102);
 			}
+		else{
+			$this->SetStatus(203);
+		}
     }
 
 		/**
@@ -33,30 +34,6 @@ class IFTTTSplitter extends IPSModule
         *
         *
         */
-	
-	################## DUMMYS / WOARKAROUNDS - protected
-
-    protected function GetParent()
-    {
-        $instance = IPS_GetInstance($this->InstanceID);
-        return ($instance['ConnectionID'] > 0) ? $instance['ConnectionID'] : false;
-    }
-
-    protected function HasActiveParent($ParentID)
-    {
-        if ($ParentID > 0)
-        {
-            $parent = IPS_GetInstance($ParentID);
-            if ($parent['InstanceStatus'] == 102)
-            {
-                $this->SetStatus(102);
-                return true;
-            }
-        }
-        $this->SetStatus(203);
-        return false;
-    }
-
 
 	// Data an Child weitergeben
     // Type String, Declaration can be used when PHP 7 is available
