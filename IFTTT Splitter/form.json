@@ -1,29 +1,34 @@
 {
-    	"elements":
-	[
-		{ "type": "Label", "label": "IFTTT Splitter" }
-	],
-	"status":
-            [
-                {
-                    "code": 101,
-                    "icon": "inactive",
-                    "caption": "Creating instance."
-                },
-				{
-                    "code": 102,
-                    "icon": "active",
-                    "caption": "IFTTT Splitter created."
-                },
-                {
-                    "code": 104,
-                    "icon": "inactive",
-                    "caption": "Interface closed."
-                },
-				{
-                    "code": 203,
-                    "icon": "error",
-                    "caption": "IO is not active."
-                }
-            ]
+  "elements": [
+    {
+      "type" : "Image",
+      "image": "data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAASwAAABQCAYAAACj6kh7AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuNi1jMDY3IDc5LjE1Nzc0NywgMjAxNS8wMy8zMC0yMzo0MDo0MiAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENDIDIwMTUgKFdpbmRvd3MpIiB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOjlGQkMzNDlBN0EyODExRTlCNTlERTA5QjI3NENEMUJGIiB4bXBNTTpEb2N1bWVudElEPSJ4bXAuZGlkOjlGQkMzNDlCN0EyODExRTlCNTlERTA5QjI3NENEMUJGIj4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6OUZCQzM0OTg3QTI4MTFFOUI1OURFMDlCMjc0Q0QxQkYiIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6OUZCQzM0OTk3QTI4MTFFOUI1OURFMDlCMjc0Q0QxQkYiLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz5uinOUAAAEVklEQVR42uzdz28UVQDA8fdmZrfdsmwX5IcQAqkQsW3UqmmMF8IfUI548cAFLph4wZP8AcQYriaE5QDhYvBkE5rYg9GgqPWAJkD5ZSOlbXZp0bK13d3um8d7izFQtq3yZmja+X7SHpq205m37313ZrfJSHFKaxEnX4iu0a8+3jsxcHLezyz5o0FYFZf3fNhf3NDVJ5RYw7Tef/3Trtzc2HDopZ4eA1URQ68cPj+26e0P1vYYPMETIj9z9+d9N06+G0rzhZD/fkvqUMwHmfXfdB6/XU1ltwidkDEx6+a1exc/6RzvP7Fw3dh1MpZ/q29oz+F+EYpE8QQAECwAIFgACBYAECwAIFgACBYAECwAIFgACBYAECwAIFgACBYAECwAIFgACBYAECwAIFgACBYAECwAIFgACBYAECwAWCBI5FHLlU61lFrIRfdAeek2e186Z/aedXoVjKX5/brXkl3qr9T91lxjTFyP50Xc6/HpWys+H3OsoQxaFjtgLf1UYzxc/47+Z57EzY9mM8kLlnmAs5XS8KbyrUuh9FdqL3RazT7QTZpl92nLw2sX0+HMlMtE8rQSU9nd75UzL3fHFi0zlq216bGt01cHtPScttNWfTCim64+aY+ltmvy+8/rfkvO5Vi0lHKivedgYzsxzq+N5ZFLubnxYaf5ZW8uO/vHT6FMNZ0jbbWpOzuLPxZcxsPepLaSbt9azHUfiHfJabVt6sqFlKrMaMfCJi9YZiJsLt8c7P298NFyd6KOkzljsM+Sz05GLy067n9X8Eqq4LL9lJoTv3Qc+qy8zgRLxbc4zcL8tXfkzBFzVuhWcBM8c5bVLDLCC+uVN+5+cUw6rE77u3ahD3bv3lcP3MK33PzaOXn59KvFr8+5zi/lpcTjcdULghWI9tnR394ZOXvE6aQnrIlSrrOn2G6CFeOTmgxV/fXRL49mq6U/7b4TrP97pST9tJ1MKxmspc7R7SRVkRxn0BL73kovsOPoGqz/EnjHZ3n7uAdLXYpHxYQmE938WvSS0Hn7NuDLXIpH+fjlzP46B4sX3QGspgskACBYABCpRL6GJXWo/HC+8aJmZLT58Hyhnd9nBkCwnlAL1r003bZjb7N3pZ6/go23+O8FYfVvogUQrGgoIcbzPe9P5N88GPXFde/tQt/2v64MRBpCAMk+w2pcFUopY/jfE06tgBgl90V3vYq2CiDhwQJAsACAYAEgWAwBAIIFAAQLAMECAIIFAAQLAMECAIIFAAQLAMECAIIFAAQLAMECAIIFAAQLAMECAIIFAAQLwBqSzNt8yRhSbbanpRcwpQCCFWlYNk/fHOy4/+1p5aUjjWB+dnRIyRSzCiBY0YUlWy0N75r84cK8n4l00zaA5iyLWQUQrOiE0k/X/VZhPwGsqgskACBYAECwABAsACBYAECwABAsACBYAECwABAsACBYAECwABAsACBYAECwABAsACBYAECwABAsAHjRHgkwAM2WJsURXBguAAAAAElFTkSuQmCC"
+    },
+    {
+      "type": "Label",
+      "label": "IFTTT Splitter"
+    }
+  ],
+  "status": [
+    {
+      "code": 101,
+      "icon": "inactive",
+      "caption": "Creating instance."
+    },
+    {
+      "code": 102,
+      "icon": "active",
+      "caption": "IFTTT Splitter created."
+    },
+    {
+      "code": 104,
+      "icon": "inactive",
+      "caption": "Interface closed."
+    },
+    {
+      "code": 203,
+      "icon": "error",
+      "caption": "IO is not active."
+    }
+  ]
 }

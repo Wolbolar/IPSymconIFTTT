@@ -1,4 +1,4 @@
-<?
+<?php
 
 class IFTTTSplitter extends IPSModule
 {
@@ -17,11 +17,11 @@ class IFTTTSplitter extends IPSModule
     {
 	//Never delete this line!
         parent::ApplyChanges();
-        
+
 		// Wenn I/O verbunden ist
 		if ($this->HasActiveParent())
 			{
-				$this->SetStatus(102);
+				$this->SetStatus(IS_ACTIVE);
 			}
 		else{
 			$this->SetStatus(203);
@@ -111,5 +111,3 @@ class IFTTTSplitter extends IPSModule
           IPS_SemaphoreLeave("IFTTT_" . (string) $this->InstanceID . (string) $ident);
     }
 }
-
-?>

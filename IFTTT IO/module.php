@@ -1,4 +1,4 @@
-<?
+<?php
 
 class IFTTTIO extends IPSModule
 {
@@ -21,7 +21,7 @@ class IFTTTIO extends IPSModule
 		parent::ApplyChanges();
 
 		$this->SetIFTTTInterface();
-		$this->SetStatus(102);
+		$this->SetStatus(IS_ACTIVE);
 	}
 
 
@@ -384,5 +384,3 @@ IFTTTIO_ProcessHookDataOLD(' . $this->InstanceID . ');
 		return $ipsversion;
 	}
 }
-
-?>
