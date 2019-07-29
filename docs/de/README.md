@@ -1,6 +1,8 @@
 # IPSymconIFTTT
 [![Version](https://img.shields.io/badge/Symcon-PHPModul-red.svg)](https://www.symcon.de/service/dokumentation/entwicklerbereich/sdk-tools/sdk-php/)
 [![Version](https://img.shields.io/badge/Symcon%20Version-%3E%205.1-green.svg)](https://www.symcon.de/service/dokumentation/installation/)
+![Code](https://img.shields.io/badge/Code-PHP-blue.svg)
+[![StyleCI](https://github.styleci.io/repos/72363004/shield?branch=master)](https://github.styleci.io/repos/72363004)
 
 Modul für IP-Symcon ab Version 4.1 ermöglicht die Kommunikation mit dem Dienst IFTTT.
 Anbindung von IFTTT an IP-Symcon über den _Webhooks_ Service.
@@ -347,7 +349,7 @@ Es gibt zwei Möglichkeiten, die erste ist es ein Skript zu starten, dieses wird
 Ein einfachen Skript könnte so aussehen
 
 ```php
-<?
+<?php
 $state = $_IPS['State'];
  if($state)
  {
@@ -411,7 +413,7 @@ Es gibt zwei Möglichkeiten, die erste ist es ein Skript zu starten, dieses wird
 Ein einfachen Skript könnte so aussehen
 
 ```php
-<?
+<?php
 $level = $_IPS['Level'];
 $hm_level = $level/100;
 HM_WriteValueBoolean(12345, "LEVEL", $hm_level);
