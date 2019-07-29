@@ -1311,8 +1311,7 @@ class IFTTT extends IPSModule
         }
         return $url;
     }
-
-
+    
     //Profile
     protected function RegisterProfileInteger($Name, $Icon, $Prefix, $Suffix, $MinValue, $MaxValue, $StepSize, $Digits)
     {
