@@ -1,36 +1,37 @@
 <?php
 
+declare(strict_types=1);
+
 class IFTTT extends IPSModule
 {
-
     public function Create()
     {
         //Never delete this line!
         parent::Create();
-        $this->ConnectParent("{B88FA10D-CCCA-483A-BAE2-01FEF13E7DD3}"); //IFTTT Splitter
-        $this->RegisterPropertyString("iftttmakerkey", "");
-        $this->RegisterPropertyString("event", "");
-        $this->RegisterPropertyInteger("selection", 0);
-        $this->RegisterPropertyInteger("countsendvars", 0);
-        $this->RegisterPropertyInteger("countrequestvars", 0);
-        $this->RegisterPropertyInteger("scriptid", 0);
-        $this->RegisterPropertyString("command", "");
+        $this->ConnectParent('{B88FA10D-CCCA-483A-BAE2-01FEF13E7DD3}'); //IFTTT Splitter
+        $this->RegisterPropertyString('iftttmakerkey', '');
+        $this->RegisterPropertyString('event', '');
+        $this->RegisterPropertyInteger('selection', 0);
+        $this->RegisterPropertyInteger('countsendvars', 0);
+        $this->RegisterPropertyInteger('countrequestvars', 0);
+        $this->RegisterPropertyInteger('scriptid', 0);
+        $this->RegisterPropertyString('command', '');
         for ($i = 1; $i <= 3; $i++) {
-            $this->RegisterPropertyInteger("varvalue" . $i, 0);
+            $this->RegisterPropertyInteger('varvalue' . $i, 0);
         }
         for ($i = 1; $i <= 3; $i++) {
-            $this->RegisterPropertyBoolean("modulinput" . $i, false);
+            $this->RegisterPropertyBoolean('modulinput' . $i, false);
         }
         for ($i = 1; $i <= 3; $i++) {
-            $this->RegisterPropertyString("value" . $i, "");
+            $this->RegisterPropertyString('value' . $i, '');
         }
         for ($i = 1; $i <= 15; $i++) {
-            $this->RegisterPropertyInteger("requestvarvalue" . $i, 0);
+            $this->RegisterPropertyInteger('requestvarvalue' . $i, 0);
         }
         for ($i = 1; $i <= 15; $i++) {
-            $this->RegisterPropertyBoolean("modulrequest" . $i, false);
+            $this->RegisterPropertyBoolean('modulrequest' . $i, false);
         }
-        $this->RegisterPropertyBoolean("iftttreturn", false);
+        $this->RegisterPropertyBoolean('iftttreturn', false);
 
         //we will wait until the kernel is ready
         $this->RegisterMessage(0, IPS_KERNELMESSAGE);
@@ -45,7 +46,6 @@ class IFTTT extends IPSModule
             return;
         }
 
-
         $this->ValidateConfiguration();
     }
 
@@ -53,16 +53,16 @@ class IFTTT extends IPSModule
     {
         $iftttmakerkey    = $this->ReadPropertyString('iftttmakerkey');
         $event            = $this->ReadPropertyString('event');
-        $selection        = $this->ReadPropertyInteger("selection");
-        $countsendvars    = $this->ReadPropertyInteger("countsendvars");
-        $countrequestvars = $this->ReadPropertyInteger("countrequestvars");
+        $selection        = $this->ReadPropertyInteger('selection');
+        $countsendvars    = $this->ReadPropertyInteger('countsendvars');
+        $countrequestvars = $this->ReadPropertyInteger('countrequestvars');
         $checkformsend    = false;
         $checkformget     = false;
 
         if ($selection == 4)// Google Home
         {
-            $scriptid     = $this->ReadPropertyInteger("scriptid");
-            $modulrequest = $this->ReadPropertyBoolean("modulrequest1");
+            $scriptid     = $this->ReadPropertyInteger('scriptid');
+            $modulrequest = $this->ReadPropertyBoolean('modulrequest1');
             // Valuecheck
             if ($modulrequest === false && $scriptid == 0) {
                 $errorid = 280;
@@ -75,27 +75,26 @@ class IFTTT extends IPSModule
         if ($selection == 1 || $selection == 3) // Senden , Senden / Empfangen
         {
             $iftttass = [
-                [0, "Trigger Event", "Execute", -1]];
+                [0, 'Trigger Event', 'Execute', -1]];
 
-            $this->RegisterProfileIntegerAss("IFTTT.Trigger", "Execute", "", "", 0, 0, 0, 0, $iftttass);
-            $this->RegisterVariableInteger("IFTTTTriggerEventButton", "IFTTT Trigger Event Button", "IFTTT.Trigger", 1);
-            $this->EnableAction("IFTTTTriggerEventButton");
-
+            $this->RegisterProfileIntegerAss('IFTTT.Trigger', 'Execute', '', '', 0, 0, 0, 0, $iftttass);
+            $this->RegisterVariableInteger('IFTTTTriggerEventButton', 'IFTTT Trigger Event Button', 'IFTTT.Trigger', 1);
+            $this->EnableAction('IFTTTTriggerEventButton');
 
             //key prüfen
-            if ($iftttmakerkey == "") {
+            if ($iftttmakerkey == '') {
                 $this->SetStatus(206); // IFTTT Maker Feld darf nicht leer sein
                 //$this->SetStatus(104);
             }
             //event prüfen
-            if ($event == "") {
+            if ($event == '') {
                 $this->SetStatus(209); // Event Feld darf nicht leer sein
                 //$this->SetStatus(104);
             }
             //event prüfen
             $eventcheck = false;
-            if ($event !== "") {
-                if (!preg_match("#^[a-zA-Z0-9_-]+$#", $event)) {
+            if ($event !== '') {
+                if (!preg_match('#^[a-zA-Z0-9_-]+$#', $event)) {
                     $this->SetStatus(207); //event Keine Sonderzeichen oder Leerzeichen
                     // String enthält auch andere Zeichen, Großbuchstaben, Sonderzeichen
                     //$this->SetStatus(104);
@@ -106,8 +105,8 @@ class IFTTT extends IPSModule
             }
             //maker key prüfen
             $makerkeycheck = false;
-            if ($iftttmakerkey !== "") {
-                if (!preg_match("#^[a-zA-Z0-9_-]+$#", $iftttmakerkey)) {
+            if ($iftttmakerkey !== '') {
+                if (!preg_match('#^[a-zA-Z0-9_-]+$#', $iftttmakerkey)) {
                     $this->SetStatus(208); //maker key, keine Sonderzeichen oder Leerzeichen
                     // String enthält auch andere Zeichen, Großbuchstaben, Sonderzeichen
                     //$this->SetStatus(104);
@@ -124,11 +123,11 @@ class IFTTT extends IPSModule
             $valuecheck    = false;
             // Trigger Vars
             for ($i = 1; $i <= $countsendvars; $i++) {
-                ${"varvalue" . $i}   = $this->ReadPropertyInteger('varvalue' . $i);
-                ${"modulinput" . $i} = $this->ReadPropertyBoolean('modulinput' . $i);
-                ${"value" . $i}      = $this->ReadPropertyString('value' . $i);
+                ${'varvalue' . $i}   = $this->ReadPropertyInteger('varvalue' . $i);
+                ${'modulinput' . $i} = $this->ReadPropertyBoolean('modulinput' . $i);
+                ${'value' . $i}      = $this->ReadPropertyString('value' . $i);
                 //Valuecheck
-                if (${"modulinput" . $i} === false && ${"varvalue" . $i} === 0) {
+                if (${'modulinput' . $i} === false && ${'varvalue' . $i} === 0) {
                     $errorid = 220 + $i;
                     $this->SetStatus($errorid); //IFTTT This: select a value or enter value  in module. , errorid 221 - 235
                     break;
@@ -136,7 +135,7 @@ class IFTTT extends IPSModule
                     $varvaluecheck = true;
                 }
                 //check Modul Value
-                if (${"modulinput" . $i} === true && ${"value" . $i} === "") {
+                if (${'modulinput' . $i} === true && ${'value' . $i} === '') {
                     $errorid = 240 + $i;
                     $this->SetStatus($errorid); // IFTTT This: missing value, enter value in field value, errorid 241 - 255
                     break;
@@ -159,11 +158,11 @@ class IFTTT extends IPSModule
             }
             // Action Vars
             for ($i = 1; $i <= $countrequestvars; $i++) {
-                ${"requestvarvalue" . $i} = $this->ReadPropertyInteger("requestvarvalue" . $i);
-                ${"modulrequest" . $i}    = $this->ReadPropertyBoolean("modulrequest" . $i);
+                ${'requestvarvalue' . $i} = $this->ReadPropertyInteger('requestvarvalue' . $i);
+                ${'modulrequest' . $i}    = $this->ReadPropertyBoolean('modulrequest' . $i);
                 $checkformget             = false;
                 //Valuecheck
-                if (${"modulrequest" . $i} === false && ${"requestvarvalue" . $i} === 0) {
+                if (${'modulrequest' . $i} === false && ${'requestvarvalue' . $i} === 0) {
                     $errorid = 260 + $i;
                     $this->SetStatus($errorid); //select a value or enter value in module, errorid 261 - 275
                     break;
@@ -208,7 +207,7 @@ class IFTTT extends IPSModule
 
     protected function SetRequestVariable($key, $value, $type, $i)
     {
-        $ident = "IFTTTAktionVar" . $i;
+        $ident = 'IFTTTAktionVar' . $i;
         $VarID = @$this->GetIDForIdent($ident);
         if ($VarID === false) {
             $VarID = $this->CreateVarbyType($type, $i, $key);
@@ -219,16 +218,16 @@ class IFTTT extends IPSModule
 
     protected function CreateVarbyType($type, $i, $key)
     {
-        $ident = "IFTTTAktionVar" . $i;
-        if ($type == "string") {
-            $VarID = $this->RegisterVariableString($ident, $key, "~String", $i);
-        } elseif ($type == "integer") {
-            $VarID = $this->RegisterVariableInteger($ident, $key, "", $i);
-        } elseif ($type == "double") //float
+        $ident = 'IFTTTAktionVar' . $i;
+        if ($type == 'string') {
+            $VarID = $this->RegisterVariableString($ident, $key, '~String', $i);
+        } elseif ($type == 'integer') {
+            $VarID = $this->RegisterVariableInteger($ident, $key, '', $i);
+        } elseif ($type == 'double') //float
         {
-            $VarID = $this->RegisterVariableFloat($ident, $key, "", $i);
-        } elseif ($type == "boolean") {
-            $VarID = $this->RegisterVariableBoolean($ident, $key, "~Switch", $i);
+            $VarID = $this->RegisterVariableFloat($ident, $key, '', $i);
+        } elseif ($type == 'boolean') {
+            $VarID = $this->RegisterVariableBoolean($ident, $key, '~Switch', $i);
         } else {
             $VarID = null;
         }
@@ -238,22 +237,22 @@ class IFTTT extends IPSModule
 
     protected function SetVarbyType($type, $VarID, $key, $value)
     {
-        if ($type == "string") {
+        if ($type == 'string') {
 
             SetValueString($VarID, $value);
             IPS_SetInfo($VarID, $key);
-        } elseif ($type == "integer") {
+        } elseif ($type == 'integer') {
             SetValueInteger($VarID, $value);
             IPS_SetInfo($VarID, $key);
-        } elseif ($type == "double") //float
+        } elseif ($type == 'double') //float
         {
             SetValueFloat($VarID, $value);
             IPS_SetInfo($VarID, $key);
-        } elseif ($type == "boolean") {
+        } elseif ($type == 'boolean') {
             SetValueBoolean($VarID, $value);
             IPS_SetInfo($VarID, $key);
-        } elseif ($type == "NULL") {
-            $this->SendDebug("IFTTT", "Vartype not known", 0);
+        } elseif ($type == 'NULL') {
+            $this->SendDebug('IFTTT', 'Vartype not known', 0);
         }
 
         return $VarID;
@@ -261,10 +260,10 @@ class IFTTT extends IPSModule
 
     protected function WriteValues($valuesjson)
     {
-        $this->SendDebug("Values from IFTTT", $valuesjson, 0);
-        $selection = $this->ReadPropertyInteger("selection");
+        $this->SendDebug('Values from IFTTT', $valuesjson, 0);
+        $selection = $this->ReadPropertyInteger('selection');
         $values    = json_decode($valuesjson);
-        $eventname = "IFTTTEvent";
+        $eventname = 'IFTTTEvent';
         if (isset($values->EventName)) {
             $eventname = $values->EventName;
         }
@@ -278,12 +277,12 @@ class IFTTT extends IPSModule
             $countrequestvars = $this->ReadPropertyInteger('countrequestvars');
         }
         if ($selection == 4) {
-            $scriptid     = $this->ReadPropertyInteger("scriptid");
-            $modulrequest = $this->ReadPropertyBoolean("modulrequest1");
+            $scriptid     = $this->ReadPropertyInteger('scriptid');
+            $modulrequest = $this->ReadPropertyBoolean('modulrequest1');
             if ($modulrequest == true) {
                 $i = 1;
                 foreach ($values as $key => $value) {
-                    $type = gettype($value);// Typ prüfen
+                    $type = gettype($value); // Typ prüfen
                     $this->SetRequestVariable($key, $value, $type, $i);
                     $i = $i + 1;
                 }
@@ -291,15 +290,15 @@ class IFTTT extends IPSModule
                 // state
                 if (isset($values->Status)) {
                     $state = $values->Status;
-                    $this->SendDebug("IFTTT", "no value for state " . $state . " was send to the script with id " . $scriptid, 0);
-                    IPS_RunScriptEx($scriptid, ["State" => $state, "EventName" => $eventname]);
+                    $this->SendDebug('IFTTT', 'no value for state ' . $state . ' was send to the script with id ' . $scriptid, 0);
+                    IPS_RunScriptEx($scriptid, ['State' => $state, 'EventName' => $eventname]);
                 }
 
                 // level
                 if (isset($values->Level)) {
                     $level = $values->Level;
-                    $this->SendDebug("IFTTT", "no value for level " . $level . " was send to the script with id " . $scriptid, 0);
-                    IPS_RunScriptEx($scriptid, ["Level" => $level, "EventName" => $eventname]);
+                    $this->SendDebug('IFTTT', 'no value for level ' . $level . ' was send to the script with id ' . $scriptid, 0);
+                    IPS_RunScriptEx($scriptid, ['Level' => $level, 'EventName' => $eventname]);
                 }
             }
             return;
@@ -308,8 +307,8 @@ class IFTTT extends IPSModule
         if ($countvalues == $countrequestvars && $selection != 4) {
             $i = 1;
             foreach ($values as $key => $value) {
-                $type = gettype($value);// Typ prüfen
-                $this->SendDebug("IFTTT", "value: " . $value . ", variable type: " . $type, 0);
+                $type = gettype($value); // Typ prüfen
+                $this->SendDebug('IFTTT', 'value: ' . $value . ', variable type: ' . $type, 0);
                 $requestvarvalue = $this->ReadPropertyInteger('requestvarvalue' . $i);  // Prüfen ob Modulvariable oder Var anlegen
                 if ($requestvarvalue == 0) {
                     $this->SetRequestVariable($key, $value, $type, $i);
@@ -318,37 +317,37 @@ class IFTTT extends IPSModule
                     if ($checkvartype) {
                         SetValue($requestvarvalue, $value);
                     } else {
-                        $this->SendDebug("IFTTT", "variable type does not match, no value for " . $value . " was set.", 0);
+                        $this->SendDebug('IFTTT', 'variable type does not match, no value for ' . $value . ' was set.', 0);
                     }
                 }
                 $i = $i + 1;
             }
         } else {
-            $this->SendDebug("IFTTT", "number of variables do not match with with number of variables send from IFTTT!", 0);
-            $this->SendDebug("IFTTT", "no value was set", 0);
+            $this->SendDebug('IFTTT', 'number of variables do not match with with number of variables send from IFTTT!', 0);
+            $this->SendDebug('IFTTT', 'no value was set', 0);
         }
     }
 
     protected function CompareVartype($type, $requestvarvalue)
     {
         $varinfo    = (IPS_GetVariable($requestvarvalue));
-        $vartype    = $varinfo["VariableType"];
+        $vartype    = $varinfo['VariableType'];
         $ipsvartype = false;
         if ($vartype == 0) //bool
         {
-            $ipsvartype = "boolean";
+            $ipsvartype = 'boolean';
         } elseif ($vartype == 1) //integer
         {
-            $ipsvartype = "integer";
+            $ipsvartype = 'integer';
         } elseif ($vartype == 2) //float
         {
-            $ipsvartype = "double";
+            $ipsvartype = 'double';
         } elseif ($vartype == 3) //string
         {
-            $ipsvartype = "string";
+            $ipsvartype = 'string';
         }
 
-        $this->SendDebug("IFTTT", "variable with object id " . $requestvarvalue . " has variable type: " . $vartype . " (" . $ipsvartype . ")", 0);
+        $this->SendDebug('IFTTT', 'variable with object id ' . $requestvarvalue . ' has variable type: ' . $vartype . ' (' . $ipsvartype . ')', 0);
         if ($type === $ipsvartype) {
             return true;
         } else {
@@ -356,22 +355,20 @@ class IFTTT extends IPSModule
         }
     }
 
-
     /**
      * This function will be available automatically after the module is imported with the module control.
-     * Using the custom prefix this function will be callable from PHP and JSON-RPC
+     * Using the custom prefix this function will be callable from PHP and JSON-RPC.
      *
      * @param $objid
      *
      * @return bool|string
      */
-
     protected function ConvertVarString($objid)
     {
         $vartype = IPS_GetVariable($objid)['VariableType'];
         if ($vartype === 0)//Boolean
         {
-            $value = GetValueBoolean($objid);// Boolean umwandeln in String
+            $value = GetValueBoolean($objid); // Boolean umwandeln in String
             $value = ($value) ? 'true' : 'false';
         } elseif ($vartype === 1)//Integer
         {
@@ -392,41 +389,40 @@ class IFTTT extends IPSModule
         $iftttmakerkey = $this->ReadPropertyString('iftttmakerkey');
         $event         = $this->ReadPropertyString('event');
 
-        $countsendvars = $this->ReadPropertyInteger("countsendvars");
+        $countsendvars = $this->ReadPropertyInteger('countsendvars');
         if ($countsendvars > 0) {
             // Trigger Vars
             for ($i = 1; $i <= $countsendvars; $i++) {
-                ${"modulinput" . $i} = $this->ReadPropertyBoolean('modulinput' . $i);
-                if (${"modulinput" . $i}) {
-                    ${"value" . $i} = $this->ReadPropertyString('value' . $i);
-                    ${"key" . $i}   = "value" . $i;
+                ${'modulinput' . $i} = $this->ReadPropertyBoolean('modulinput' . $i);
+                if (${'modulinput' . $i}) {
+                    ${'value' . $i} = $this->ReadPropertyString('value' . $i);
+                    ${'key' . $i}   = 'value' . $i;
                 } else {
-                    ${"objidvalue" . $i} = $this->ReadPropertyInteger('varvalue' . $i);
-                    ${"value" . $i}      = GetValue(${"objidvalue" . $i});
-                    ${"key" . $i}        = IPS_GetName(${"objidvalue" . $i});
+                    ${'objidvalue' . $i} = $this->ReadPropertyInteger('varvalue' . $i);
+                    ${'value' . $i}      = GetValue(${'objidvalue' . $i});
+                    ${'key' . $i}        = IPS_GetName(${'objidvalue' . $i});
                     //${"value".$i} = $this->ConvertVarString(${"objidvalue".$i});
                 }
             }
 
             $values = [];
             for ($i = 1; $i <= $countsendvars; $i++) {
-                $values["value" . $i] = ${"value" . $i};
+                $values['value' . $i] = ${'value' . $i};
             }
             $count = count($values);
             if ($count == 1) {
-                $values["value2"] = null;
-                $values["value3"] = null;
+                $values['value2'] = null;
+                $values['value3'] = null;
             } elseif ($count == 2) {
-                $values["value3"] = null;
+                $values['value3'] = null;
             }
         } else {
-            $values = ["value1" => null, "value2" => null, "value3" => null];
+            $values = ['value1' => null, 'value2' => null, 'value3' => null];
         }
 
-
         $values_string = json_encode($values);
-        $this->SendDebug("IFTTT", "Send trigger event " . $event, 0);
-        $this->SendDebug("IFTTT", "Send trigger with values " . $values_string, 0);
+        $this->SendDebug('IFTTT', 'Send trigger event ' . $event, 0);
+        $this->SendDebug('IFTTT', 'Send trigger with values ' . $values_string, 0);
         $iftttreturn = $this->SendEventTriggerVar1to3($iftttmakerkey, $event, $values_string);
         return $iftttreturn;
     }
@@ -435,23 +431,23 @@ class IFTTT extends IPSModule
     {
 
         $values  = json_decode($values_string, true);
-        $payload = ["iftttmakerkey" => $iftttmakerkey, "event" => $event, "values" => $values];
+        $payload = ['iftttmakerkey' => $iftttmakerkey, 'event' => $event, 'values' => $values];
 
         //an Splitter schicken
         $result =
-            $this->SendDataToParent(json_encode(["DataID" => "{78A293F6-50ED-4250-AF5A-05F6F2C563EB}", "Buffer" => $payload])); //IFTTT Interface GUI
+            $this->SendDataToParent(json_encode(['DataID' => '{78A293F6-50ED-4250-AF5A-05F6F2C563EB}', 'Buffer' => $payload])); //IFTTT Interface GUI
         return $result;
     }
 
     public function SendEventTrigger(string $iftttmakerkey, string $event, string $value1, string $value2, string $value3)
     {
 
-        $values  = ["value1" => $value1, "value2" => $value2, "value3" => $value3];
-        $payload = ["iftttmakerkey" => $iftttmakerkey, "event" => $event, "values" => $values];
+        $values  = ['value1' => $value1, 'value2' => $value2, 'value3' => $value3];
+        $payload = ['iftttmakerkey' => $iftttmakerkey, 'event' => $event, 'values' => $values];
 
         //an Splitter schicken
         $result =
-            $this->SendDataToParent(json_encode(["DataID" => "{78A293F6-50ED-4250-AF5A-05F6F2C563EB}", "Buffer" => $payload])); //IFTTT Interface GUI
+            $this->SendDataToParent(json_encode(['DataID' => '{78A293F6-50ED-4250-AF5A-05F6F2C563EB}', 'Buffer' => $payload])); //IFTTT Interface GUI
         return $result;
     }
 
@@ -470,12 +466,12 @@ class IFTTT extends IPSModule
     public function RequestAction($Ident, $Value)
     {
         switch ($Ident) {
-            case "IFTTTTriggerEventButton":
-                SetValue($this->GetIDForIdent("IFTTTTriggerEventButton"), $Value);
+            case 'IFTTTTriggerEventButton':
+                SetValue($this->GetIDForIdent('IFTTTTriggerEventButton'), $Value);
                 $iftttreturn    = $this->TriggerEvent();
                 $iftttreturnvis = $this->ReadPropertyBoolean('iftttreturn');
                 if ($iftttreturnvis === true) {
-                    $InstanzenListe = IPS_GetInstanceListByModuleID("{3565B1F2-8F7B-4311-A4B6-1BF1D868F39E}");
+                    $InstanzenListe = IPS_GetInstanceListByModuleID('{3565B1F2-8F7B-4311-A4B6-1BF1D868F39E}');
                     foreach ($InstanzenListe as $InstanzID) {
                         WFC_SendNotification($InstanzID, 'IFTTT', $iftttreturn, 'Execute', 4);
                     }
@@ -483,35 +479,33 @@ class IFTTT extends IPSModule
 
                 break;
             default:
-                throw new Exception("Invalid ident");
+                throw new Exception('Invalid ident');
         }
     }
 
     protected function GetUsernamePassword()
     {
         $objid           = $this->GetIOObjectID();
-        $username        = IPS_GetProperty($objid, "username");
-        $password        = IPS_GetProperty($objid, "password");
-        $webhooksettings = ["username" => $username, "password" => $password];
+        $username        = IPS_GetProperty($objid, 'username');
+        $password        = IPS_GetProperty($objid, 'password');
+        $webhooksettings = ['username' => $username, 'password' => $password];
         return $webhooksettings;
     }
 
-
     protected function GetIOObjectID()
     {
-        $InstanzenListe = IPS_GetInstanceListByModuleID("{2E91373A-E70B-46D8-99A7-71A499F6783A}");
+        $InstanzenListe = IPS_GetInstanceListByModuleID('{2E91373A-E70B-46D8-99A7-71A499F6783A}');
         foreach ($InstanzenListe as $InstanzID) {
             return $InstanzID;
         }
     }
-
 
     /***********************************************************
      * Configuration Form
      ***********************************************************/
 
     /**
-     * build configuration form
+     * build configuration form.
      *
      * @return string
      */
@@ -527,16 +521,16 @@ class IFTTT extends IPSModule
     }
 
     /**
-     * return form configurations on configuration step
+     * return form configurations on configuration step.
      *
      * @return array
      */
     protected function FormHead()
     {
         $form             = [];
-        $selection        = $this->ReadPropertyInteger("selection");
-        $countsendvars    = $this->ReadPropertyInteger("countsendvars");
-        $countrequestvars = $this->ReadPropertyInteger("countrequestvars");
+        $selection        = $this->ReadPropertyInteger('selection');
+        $countsendvars    = $this->ReadPropertyInteger('countsendvars');
+        $countrequestvars = $this->ReadPropertyInteger('countrequestvars');
         $form             = [
             [
                 'type'    => 'Label',
@@ -571,7 +565,7 @@ class IFTTT extends IPSModule
             ]];
         if ($selection == 0)// keine Auswahl
         {
-            $this->SendDebug("IFTTT", "No selection", 0);
+            $this->SendDebug('IFTTT', 'No selection', 0);
         } elseif ($selection == 1) // Senden
         {
             $form = array_merge_recursive(
@@ -805,15 +799,14 @@ class IFTTT extends IPSModule
         return $form;
     }
 
-
     /**
-     * return form actions by token
+     * return form actions by token.
      *
      * @return array
      */
     protected function FormActions()
     {
-        $selection = $this->ReadPropertyInteger("selection");
+        $selection = $this->ReadPropertyInteger('selection');
         // $countrequestvars = $this->ReadPropertyInteger("countrequestvars");
         $event = $this->ReadPropertyString('event');
         if ($selection == 0)// keine Auswahl
@@ -1160,7 +1153,6 @@ class IFTTT extends IPSModule
         return $form;
     }
 
-
     protected function IFTTTConfigRequest($countrequestvars)
     {
         if ($countrequestvars == 0) {
@@ -1168,7 +1160,7 @@ class IFTTT extends IPSModule
         } else {
             $form = '{ "type": "Label", "label": "         values              {';
             for ($i = 1; $i <= 4; $i++) {
-                $form .= "\\\"keyvalue" . $i . "\\\":\\\"value" . $i . "\\\",";
+                $form .= '\\"keyvalue' . $i . '\\":\\"value' . $i . '\\",';
             }
             $form = substr($form, 0, -1);
             $form .= ' }"},';
@@ -1179,19 +1171,19 @@ class IFTTT extends IPSModule
     protected function IFTTTConfigAuthUser()
     {
         $webhooksettings = $this->GetUsernamePassword();
-        $username        = $webhooksettings["username"];
+        $username        = $webhooksettings['username'];
         return $username;
     }
 
     protected function IFTTTConfigAuthPassword()
     {
         $webhooksettings = $this->GetUsernamePassword();
-        $password        = $webhooksettings["password"];
+        $password        = $webhooksettings['password'];
         return $password;
     }
 
     /**
-     * return from status
+     * return from status.
      *
      * @return array
      */
@@ -1251,7 +1243,6 @@ class IFTTT extends IPSModule
         return $form;
     }
 
-
     protected function FormStatusErrorSelectorEnter() // errorid 221 - 223
     {
         $form = [];
@@ -1303,11 +1294,11 @@ class IFTTT extends IPSModule
     // IP-Symcon Connect auslesen
     protected function GetIPSConnect()
     {
-        $ipsymconconnectid = IPS_GetInstanceListByModuleID("{9486D575-BE8C-4ED8-B5B5-20930E26DE6F}")[0];
+        $ipsymconconnectid = IPS_GetInstanceListByModuleID('{9486D575-BE8C-4ED8-B5B5-20930E26DE6F}')[0];
         $connectinfo       = CC_GetUrl($ipsymconconnectid);
-        if ($connectinfo == false || $connectinfo == "") {
+        if ($connectinfo == false || $connectinfo == '') {
             //	$connectinfo = 'https://<IP-Symcon Connect>.ipmagic.de';
-            $connectinfo = "https://123456789abcdefgh.ipmagic.de";
+            $connectinfo = 'https://123456789abcdefgh.ipmagic.de';
         }
         return $connectinfo;
     }
@@ -1321,7 +1312,7 @@ class IFTTT extends IPSModule
         } else {
             $profile = IPS_GetVariableProfile($Name);
             if ($profile['ProfileType'] != 1) {
-                throw new Exception("Variable profile type does not match for profile " . $Name);
+                throw new Exception('Variable profile type does not match for profile ' . $Name);
             }
         }
 
@@ -1336,7 +1327,7 @@ class IFTTT extends IPSModule
 
     protected function RegisterProfileIntegerAss($Name, $Icon, $Prefix, $Suffix, $MinValue, $MaxValue, $Stepsize, $Digits, $Associations)
     {
-        if (sizeof($Associations) === 0) {
+        if (count($Associations) === 0) {
             $MinValue = 0;
             $MaxValue = 0;
         }
@@ -1367,4 +1358,3 @@ class IFTTT extends IPSModule
         }
     }
 }
-
