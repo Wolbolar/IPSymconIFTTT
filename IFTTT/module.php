@@ -366,6 +366,7 @@ class IFTTT extends IPSModule
     protected function ConvertVarString($objid)
     {
         $vartype = IPS_GetVariable($objid)['VariableType'];
+        $value = "";
         if ($vartype === 0)//Boolean
         {
             $value = GetValueBoolean($objid); // Boolean umwandeln in String
@@ -479,7 +480,7 @@ class IFTTT extends IPSModule
 
                 break;
             default:
-                throw new Exception('Invalid ident');
+                $this->SendDebug('IFTTT', 'Invalid ident', 0);
         }
     }
 
@@ -495,9 +496,7 @@ class IFTTT extends IPSModule
     protected function GetIOObjectID()
     {
         $InstanzenListe = IPS_GetInstanceListByModuleID('{2E91373A-E70B-46D8-99A7-71A499F6783A}');
-        foreach ($InstanzenListe as $InstanzID) {
-            return $InstanzID;
-        }
+        return $InstanzenListe[0];
     }
 
     /***********************************************************
@@ -527,7 +526,6 @@ class IFTTT extends IPSModule
      */
     protected function FormHead()
     {
-        $form             = [];
         $selection        = $this->ReadPropertyInteger('selection');
         $countsendvars    = $this->ReadPropertyInteger('countsendvars');
         $countrequestvars = $this->ReadPropertyInteger('countrequestvars');
@@ -809,6 +807,7 @@ class IFTTT extends IPSModule
         $selection = $this->ReadPropertyInteger('selection');
         // $countrequestvars = $this->ReadPropertyInteger("countrequestvars");
         $event = $this->ReadPropertyString('event');
+        $form = [];
         if ($selection == 0)// keine Auswahl
         {
             $form = [];
@@ -1294,14 +1293,25 @@ class IFTTT extends IPSModule
     // IP-Symcon Connect auslesen
     protected function GetIPSConnect()
     {
-        $ipsymconconnectid = IPS_GetInstanceListByModuleID('{9486D575-BE8C-4ED8-B5B5-20930E26DE6F}')[0];
-        $connectinfo       = CC_GetUrl($ipsymconconnectid);
+        $connectinfo       = $this->GetConnectUrl();
         if ($connectinfo == false || $connectinfo == '') {
             //	$connectinfo = 'https://<IP-Symcon Connect>.ipmagic.de';
             $connectinfo = 'https://123456789abcdefgh.ipmagic.de';
         }
         return $connectinfo;
     }
+
+    private function GetConnectUrl()
+    {
+        $instID = IPS_GetInstanceListByModuleID('{9486D575-BE8C-4ED8-B5B5-20930E26DE6F}')[0];
+        if (IPS_GetKernelVersion() >= 5.2) {
+            $url = CC_GetConnectURL($instID);
+        } else {
+            $url = CC_GetUrl($instID);
+        }
+        return $url;
+    }
+
 
     //Profile
     protected function RegisterProfileInteger($Name, $Icon, $Prefix, $Suffix, $MinValue, $MaxValue, $StepSize, $Digits)
@@ -1312,7 +1322,7 @@ class IFTTT extends IPSModule
         } else {
             $profile = IPS_GetVariableProfile($Name);
             if ($profile['ProfileType'] != 1) {
-                throw new Exception('Variable profile type does not match for profile ' . $Name);
+                $this->SendDebug('IFTTT', 'Variable profile type does not match for profile '. $Name, 0);
             }
         }
 
