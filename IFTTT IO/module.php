@@ -218,7 +218,7 @@ class IFTTTIO extends IPSModule
      * Löscht eine Script, sofern vorhanden.
      *
      *
-     * @param int $Ident Ident der Variable.
+     * @param string $Ident Ident der Variable.
      */
     protected function UnregisterScript($Ident)
     {
@@ -276,8 +276,8 @@ IFTTTIO_ProcessHookDataOLD(' . $this->InstanceID . ');
             echo 'Authorization required';
             return;
         }
-        $objectid = $data->objectid;
-        $values   = $data->values;
+        // $objectid = $data->objectid;
+        // $values   = $data->values;
         $this->SendDebug('IFTTT I/O:', $iftttjson . ' empfangen.', 0);
         $this->SendJSON($data);
     }
@@ -332,8 +332,8 @@ IFTTTIO_ProcessHookDataOLD(' . $this->InstanceID . ');
             echo 'Authorization required';
             return;
         }
-        $objectid = $data->objectid;
-        $values   = $data->values;
+        // $objectid = $data->objectid;
+        // $values   = $data->values;
         $this->SendJSON($data);
     }
 

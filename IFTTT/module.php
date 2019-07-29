@@ -366,7 +366,7 @@ class IFTTT extends IPSModule
     protected function ConvertVarString($objid)
     {
         $vartype = IPS_GetVariable($objid)['VariableType'];
-        $value = "";
+        $value   = '';
         if ($vartype === 0)//Boolean
         {
             $value = GetValueBoolean($objid); // Boolean umwandeln in String
@@ -807,7 +807,7 @@ class IFTTT extends IPSModule
         $selection = $this->ReadPropertyInteger('selection');
         // $countrequestvars = $this->ReadPropertyInteger("countrequestvars");
         $event = $this->ReadPropertyString('event');
-        $form = [];
+        $form  = [];
         if ($selection == 0)// keine Auswahl
         {
             $form = [];
@@ -1293,7 +1293,7 @@ class IFTTT extends IPSModule
     // IP-Symcon Connect auslesen
     protected function GetIPSConnect()
     {
-        $connectinfo       = $this->GetConnectUrl();
+        $connectinfo = $this->GetConnectUrl();
         if ($connectinfo == false || $connectinfo == '') {
             //	$connectinfo = 'https://<IP-Symcon Connect>.ipmagic.de';
             $connectinfo = 'https://123456789abcdefgh.ipmagic.de';
@@ -1322,7 +1322,7 @@ class IFTTT extends IPSModule
         } else {
             $profile = IPS_GetVariableProfile($Name);
             if ($profile['ProfileType'] != 1) {
-                $this->SendDebug('IFTTT', 'Variable profile type does not match for profile '. $Name, 0);
+                $this->SendDebug('IFTTT', 'Variable profile type does not match for profile ' . $Name, 0);
             }
         }
 
