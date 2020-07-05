@@ -715,10 +715,6 @@ class IFTTT extends IPSModule
                 'type'    => 'Label',
                 'caption' => 'number of variables for a IFTTT That (max 15)'],
             [
-                'name'    => 'countrequestvars',
-                'type'    => 'NumberSpinner',
-                'caption' => 'number of variables'],
-            [
                 'name'    => 'countsendvars',
                 'type'    => 'NumberSpinner',
                 'caption' => 'number of variables']];
