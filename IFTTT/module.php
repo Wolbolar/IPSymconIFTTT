@@ -882,32 +882,17 @@ class IFTTT extends IPSModule
                             'caption' => '     ' . $this->GetIPSConnect() . '/hook/IFTTT'],
                         [
                             'type'    => 'Label',
-                            'caption' => ' - Header:'],
+                            'caption' => ' - Content Type:'],
                         [
                             'type'    => 'Label',
-                            'caption' => '     {'],
-                        [
-                            'type'    => 'Label',
-                            'caption' => '      "charset":"utf-8",'],
-                        [
-                            'type'    => 'Label',
-                            'caption' => '      "Content-Type":"application/json",'],
-                        [
-                            'type'    => 'Label',
-                            'caption' => '     }'],
+                            'caption' => '      "application/json"'],
                         [
                             'type'    => 'Label',
                             'caption' => ' - Body: (example)'],
                         [
                             'type'    => 'Label',
-                            'caption' => '     {'],
-                        [
-                            'type'    => 'Label',
-                            'caption' => '     {"objectid":' . $this->InstanceID
-                                         . ',"values":{"keyvalue1":"value1string","keyvalue2":value2float,"keyvalue3":value3int,"keyvalue4":value4bool}}'],
-                        [
-                            'type'    => 'Label',
-                            'caption' => '     }'],
+                            'caption' => '     {"username":"'. $this->IFTTTConfigAuthUser(). '","password":"'. $this->IFTTTConfigAuthPassword(). '","objectid":' . $this->InstanceID
+                                . ',"values":{"keyvalue1":"value1string","keyvalue2":value2float,"keyvalue3":value3int,"keyvalue4":value4bool}}'],
                         [
                             'type'    => 'Label',
                             'caption' => '     example values begin and end with curly brackets'],
@@ -916,31 +901,10 @@ class IFTTT extends IPSModule
                             'caption' => '     put keys always inside "", string value inside "", boolean, integer and float values without ""'],
                         [
                             'type'    => 'Label',
-                            'caption' => '     show advanced options'],
-                        [
-                            'type'    => 'Label',
                             'caption' => '     username (standard ipsymcon), set username in IFTTT IO'],
                         [
                             'type'    => 'Label',
-                            'caption' => '     password is set, for individual password set password in IFTTT IO'],
-                        [
-                            'type'    => 'Label',
-                            'caption' => ' - Authentification:'],
-                        [
-                            'type'    => 'Label',
-                            'caption' => '     {'],
-                        [
-                            'type'    => 'Label',
-                            'caption' => '      "type":"Basic",'],
-                        [
-                            'type'    => 'Label',
-                            'caption' => '      "username":"' . $this->IFTTTConfigAuthUser() . '",'],
-                        [
-                            'type'    => 'Label',
-                            'caption' => '      "password":"' . $this->IFTTTConfigAuthPassword() . '",'],
-                        [
-                            'type'    => 'Label',
-                            'caption' => '     }']]]];
+                            'caption' => '     password is set, for individual password set password in IFTTT IO']]]];
         } elseif ($selection == 3) // Senden / Empfangen
         {
             $form = [
@@ -996,32 +960,17 @@ class IFTTT extends IPSModule
                             'caption' => '     ' . $this->GetIPSConnect() . '/hook/IFTTT'],
                         [
                             'type'    => 'Label',
-                            'caption' => ' - Header:'],
+                            'caption' => ' - Content Type:'],
                         [
                             'type'    => 'Label',
-                            'caption' => '     {'],
-                        [
-                            'type'    => 'Label',
-                            'caption' => '      "charset":"utf-8",'],
-                        [
-                            'type'    => 'Label',
-                            'caption' => '      "Content-Type":"application/json",'],
-                        [
-                            'type'    => 'Label',
-                            'caption' => '     }'],
+                            'caption' => '      "application/json"'],
                         [
                             'type'    => 'Label',
                             'caption' => ' - Body: (example)'],
                         [
                             'type'    => 'Label',
-                            'caption' => '     {'],
-                        [
-                            'type'    => 'Label',
-                            'caption' => '     {"objectid":' . $this->InstanceID
-                                         . ',"values":{"keyvalue1":"value1string","keyvalue2":value2float,"keyvalue3":value3int,"keyvalue4":value4bool}}'],
-                        [
-                            'type'    => 'Label',
-                            'caption' => '     }'],
+                            'caption' => '     {"username":"'. $this->IFTTTConfigAuthUser(). '","password":"'. $this->IFTTTConfigAuthPassword(). '","objectid":' . $this->InstanceID
+                                . ',"values":{"keyvalue1":"value1string","keyvalue2":value2float,"keyvalue3":value3int,"keyvalue4":value4bool}}'],
                         [
                             'type'    => 'Label',
                             'caption' => '     example values begin and end with curly brackets'],
@@ -1030,31 +979,10 @@ class IFTTT extends IPSModule
                             'caption' => '     put keys always inside "", string value inside "", boolean, integer and float values without ""'],
                         [
                             'type'    => 'Label',
-                            'caption' => '     show advanced options'],
-                        [
-                            'type'    => 'Label',
                             'caption' => '     username (standard ipsymcon), set username in IFTTT IO'],
                         [
                             'type'    => 'Label',
-                            'caption' => '     password is set, for individual password set password in IFTTT IO'],
-                        [
-                            'type'    => 'Label',
-                            'caption' => ' - Authentification:'],
-                        [
-                            'type'    => 'Label',
-                            'caption' => '     {'],
-                        [
-                            'type'    => 'Label',
-                            'caption' => '      "type":"Basic",'],
-                        [
-                            'type'    => 'Label',
-                            'caption' => '      "username":"' . $this->IFTTTConfigAuthUser() . '",'],
-                        [
-                            'type'    => 'Label',
-                            'caption' => '      "password":"' . $this->IFTTTConfigAuthPassword() . '",'],
-                        [
-                            'type'    => 'Label',
-                            'caption' => '     }']]],
+                            'caption' => '     password is set, for individual password set password in IFTTT IO']]],
                 [
                     'type'    => 'Label',
                     'caption' => '______________________________________________________________________________________________________'],
@@ -1190,15 +1118,15 @@ class IFTTT extends IPSModule
     {
         $form = [
             [
-                'code'    => 101,
+                'code'    => IS_CREATING,
                 'icon'    => 'inactive',
                 'caption' => 'Creating instance.'],
             [
-                'code'    => 102,
+                'code'    => IS_ACTIVE,
                 'icon'    => 'active',
                 'caption' => 'IFTTT created.'],
             [
-                'code'    => 104,
+                'code'    => IS_INACTIVE,
                 'icon'    => 'inactive',
                 'caption' => 'interface closed.'],
             [
@@ -1311,7 +1239,7 @@ class IFTTT extends IPSModule
         }
         return $url;
     }
-
+    
     //Profile
     protected function RegisterProfileInteger($Name, $Icon, $Prefix, $Suffix, $MinValue, $MaxValue, $StepSize, $Digits)
     {
