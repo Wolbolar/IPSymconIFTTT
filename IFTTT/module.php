@@ -715,7 +715,7 @@ class IFTTT extends IPSModule
                 'type'    => 'Label',
                 'caption' => 'number of variables for a IFTTT That (max 15)'],
             [
-                'name'    => 'countsendvars',
+                'name'    => 'countrequestvars',
                 'type'    => 'NumberSpinner',
                 'caption' => 'number of variables']];
         if ($countrequestvars > 0) {
