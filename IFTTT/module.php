@@ -719,16 +719,6 @@ class IFTTT extends IPSModule
                 'type'    => 'NumberSpinner',
                 'caption' => 'number of variables'],
             [
-                'type'    => 'Label',
-                'caption' => 'please choose an event name (no special characters or blank)'],
-            [
-                'name'    => 'event',
-                'type'    => 'ValidationTextBox',
-                'caption' => 'event name'],
-            [
-                'type'    => 'Label',
-                'caption' => 'number of variables for IFTTT This (max 3)'],
-            [
                 'name'    => 'countsendvars',
                 'type'    => 'NumberSpinner',
                 'caption' => 'number of variables']];
