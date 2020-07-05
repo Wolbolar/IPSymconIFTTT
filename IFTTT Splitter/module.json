@@ -9,5 +9,6 @@
     "parentRequirements": ["{0259663C-D915-4A86-902B-70D865662E78}"],
     "childRequirements": ["{F294A60D-30AF-4452-9A17-44A89EBE6ADE}"],
     "implemented": ["{BC2FAD9D-C92E-4CFA-ADA5-79A56DA5D2F7}", "{78A293F6-50ED-4250-AF5A-05F6F2C563EB}"],
-    "prefix": "IFTTTS"
+    "prefix": "IFTTTS",
+    "url": "https://github.com/Wolbolar/IPSymconIFTTT"
 }

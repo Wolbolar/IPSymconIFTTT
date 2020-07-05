@@ -12,5 +12,6 @@
 	"parentRequirements": ["{78A293F6-50ED-4250-AF5A-05F6F2C563EB}"],
 	"childRequirements": [],
 	"implemented": ["{F294A60D-30AF-4452-9A17-44A89EBE6ADE}"],
-	"prefix": "IFTTT"
+	"prefix": "IFTTT",
+	"url": "https://github.com/Wolbolar/IPSymconIFTTT"
 }

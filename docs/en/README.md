@@ -1,6 +1,8 @@
 # IPSymconIFTTT
 [![Version](https://img.shields.io/badge/Symcon-PHPModule-red.svg)](https://www.symcon.de/service/dokumentation/entwicklerbereich/sdk-tools/sdk-php/)
 [![Version](https://img.shields.io/badge/Symcon%20Version-%3E%205.1-green.svg)](https://www.symcon.de/en/service/documentation/installation/)
+![Code](https://img.shields.io/badge/Code-PHP-blue.svg)
+[![StyleCI](https://github.styleci.io/repos/72363004/shield?branch=master)](https://github.styleci.io/repos/72363004)
 
 Module for IP-Symcon version 4.1 or higher enables communication with the IFTTT service.
 Connection of IFTTT to IP-Symcon via the _Webhooks_ Service.
@@ -12,7 +14,7 @@ Connection of IFTTT to IP-Symcon via the _Webhooks_ Service.
 1. [Features](#1-features)
 2. [Requirements](#2-requirements)
 3. [Installation](#3-installation)
-4. [Function reference](#4-functionreference)
+4. [Function reference](#4-function-reference)
 5. [Configuration](#5-configuration)
 6. [Annex](#6-annex)
 
@@ -336,7 +338,7 @@ There are two possibilities, the first is to start a script, which is selected i
 A simple script might look like this
 
 ```php
-<?
+<?php
 $state = $_IPS['State'];
  if($state)
  {
@@ -400,7 +402,7 @@ There are two possibilities, the first is to start a script, which is selected i
 A simple script might look like this
 
 ```php
-<?
+<?php
 $level = $_IPS['Level'];
 $hm_level = $level/100;
 HM_WriteValueBoolean(12345, "LEVEL", $hm_level);
