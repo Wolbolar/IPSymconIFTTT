@@ -68,8 +68,8 @@ class IFTTTSplitter extends IPSModule
         // z.B. CRC prüfen, in Einzelteile zerlegen
         try {
             // Weiterleiten zur I/O Instanz
-            $resultat =
-                $this->SendDataToParent(json_encode(['DataID' => '{0259663C-D915-4A86-902B-70D865662E78}', 'Buffer' => $data->Buffer])); //TX GUI
+            $resultat = $this->SendDataToParent(json_encode(['DataID' => '{0259663C-D915-4A86-902B-70D865662E78}', 'Buffer' => $data->Buffer])); //TX GUI
+            $this->SendDebug('IFTTT Splitter Forward Response:', $resultat, 0);
         } catch (Exception $ex) {
             echo $ex->getMessage();
             echo ' in ' . $ex->getFile() . ' line: ' . $ex->getLine() . '.';
@@ -77,7 +77,6 @@ class IFTTTSplitter extends IPSModule
 
         // Weiterverarbeiten und durchreichen
         return $resultat;
-
     }
 
     //################# SEMAPHOREN Helper  - private
