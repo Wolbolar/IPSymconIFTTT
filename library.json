@@ -4,10 +4,9 @@
 	"name": "IPSymconIFTTT",
 	"url": "www.ip-symcon.de",
 	"compatibility": {
-		"version": "4.2",
-		"date": 1491343200
+		"version": "5.2"
 	},
-	"version": "0.7",
-	"build": 3,
+	"version": "0.8",
+	"build": 1,
 	"date": 0
 }

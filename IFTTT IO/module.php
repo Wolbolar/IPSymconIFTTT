@@ -33,21 +33,23 @@ class IFTTTIO extends IPSModule
     //public function ForwardData(string $JSONString)
     public function ForwardData($JSONString)
     {
-        // Empfangene Daten von der Splitter Instanz
+        $this->SendDebug('IFTTT I/O:', 'Forward Data: ' . $JSONString, 0);
         $data   = json_decode($JSONString);
         $result = false;
 
-        // Hier würde man den Buffer im Normalfall verarbeiten
-        // z.B. CRC prüfen, in Einzelteile zerlegen
         try {
-            // Absenden an IFTTT
-
-            //IPS_LogMessage("Forward Data to IFTTT", utf8_decode($data->Buffer));
-
-            //aufarbeiten
             $command = $data->Buffer;
-            $result  = $this->SendCommand($command);
-
+            $event         = $command->event;
+            if($event == 'GET_WEBHOOK_USER_PASSWORD')
+            {
+                $result  = $this->GetUsernamePassword();
+                // $this->SendDebug('IFTTT', 'Webhook Configuration: ' . $result, 0);
+            }
+            else
+            {
+                $result  = $this->SendCommand($command);
+                $this->SendDebug('IFTTT', 'Command response: ' . json_encode($result), 0);
+            }
         } catch (Exception $ex) {
             echo $ex->getMessage();
             echo ' in ' . $ex->getFile() . ' line: ' . $ex->getLine() . '.';
@@ -92,6 +94,14 @@ class IFTTTIO extends IPSModule
         $this->SendDebug('ResponseIFTTT', $result, 0);
         curl_close($ch);
         return $result;
+    }
+
+    protected function GetUsernamePassword()
+    {
+        $username        = $this->ReadPropertyString('username');
+        $password        = $this->ReadPropertyString('password');
+        $webhooksettings = json_encode(['username' => $username, 'password' => $password]);
+        return $webhooksettings;
     }
 
     protected function SendCommand($command)

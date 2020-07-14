@@ -486,10 +486,10 @@ class IFTTT extends IPSModule
 
     protected function GetUsernamePassword()
     {
-        $objid           = $this->GetIOObjectID();
-        $username        = IPS_GetProperty($objid, 'username');
-        $password        = IPS_GetProperty($objid, 'password');
-        $webhooksettings = ['username' => $username, 'password' => $password];
+        $payload = ['event' => 'GET_WEBHOOK_USER_PASSWORD'];
+        $result = $this->SendDataToParent(json_encode(['DataID' => '{78A293F6-50ED-4250-AF5A-05F6F2C563EB}', 'Buffer' => $payload])); //IFTTT Interface GUI
+        $this->SendDebug('IFTTT Webhook', $result, 0);
+        $webhooksettings = json_decode($result, true);
         return $webhooksettings;
     }
 
@@ -862,10 +862,13 @@ class IFTTT extends IPSModule
                             'caption' => '     POST '],
                         [
                             'type'    => 'Label',
-                            'caption' => ' - URI:'],
+                            'caption' => ' - URL:'],
                         [
-                            'type'    => 'Label',
-                            'caption' => '     ' . $this->GetIPSConnect() . '/hook/IFTTT'],
+                            'type'    => 'ValidationTextBox',
+                            'name'    => 'URL',
+                            'value'   => $this->GetIPSConnect() . '/hook/IFTTT',
+                            'width' => '550px',
+                            'caption' => 'URL'],
                         [
                             'type'    => 'Label',
                             'caption' => ' - Content Type:'],
@@ -876,9 +879,13 @@ class IFTTT extends IPSModule
                             'type'    => 'Label',
                             'caption' => ' - Body: (example)'],
                         [
-                            'type'    => 'Label',
-                            'caption' => '     {"username":"'. $this->IFTTTConfigAuthUser(). '","password":"'. $this->IFTTTConfigAuthPassword(). '","objectid":' . $this->InstanceID
-                                . ',"values":{"keyvalue1":"value1string","keyvalue2":value2float,"keyvalue3":value3int,"keyvalue4":value4bool}}'],
+                            'type'    => 'ValidationTextBox',
+                            'name'    => 'Body',
+                            'value'   => '{"username":"'. $this->IFTTTConfigAuthUser(). '","password":"'. $this->IFTTTConfigAuthPassword(). '","objectid":' . $this->InstanceID
+                                . ',"values":{"keyvalue1":"value1string","keyvalue2":value2float,"keyvalue3":value3int,"keyvalue4":value4bool}}',
+                            'multiline' => true,
+                            'width' => '550px',
+                            'caption' => 'URL'],
                         [
                             'type'    => 'Label',
                             'caption' => '     example values begin and end with curly brackets'],
@@ -940,10 +947,12 @@ class IFTTT extends IPSModule
                             'caption' => '     POST '],
                         [
                             'type'    => 'Label',
-                            'caption' => ' - URI:'],
+                            'caption' => ' - URL:'],
                         [
-                            'type'    => 'Label',
-                            'caption' => '     ' . $this->GetIPSConnect() . '/hook/IFTTT'],
+                            'type'    => 'ValidationTextBox',
+                            'name'    => 'URL',
+                            'value'   => $this->GetIPSConnect() . '/hook/IFTTT',
+                            'caption' => 'URL'],
                         [
                             'type'    => 'Label',
                             'caption' => ' - Content Type:'],
@@ -954,9 +963,13 @@ class IFTTT extends IPSModule
                             'type'    => 'Label',
                             'caption' => ' - Body: (example)'],
                         [
-                            'type'    => 'Label',
-                            'caption' => '     {"username":"'. $this->IFTTTConfigAuthUser(). '","password":"'. $this->IFTTTConfigAuthPassword(). '","objectid":' . $this->InstanceID
-                                . ',"values":{"keyvalue1":"value1string","keyvalue2":value2float,"keyvalue3":value3int,"keyvalue4":value4bool}}'],
+                            'type'    => 'ValidationTextBox',
+                            'name'    => 'Body',
+                            'value'   => '{"username":"'. $this->IFTTTConfigAuthUser(). '","password":"'. $this->IFTTTConfigAuthPassword(). '","objectid":' . $this->InstanceID
+                                . ',"values":{"keyvalue1":"value1string","keyvalue2":value2float,"keyvalue3":value3int,"keyvalue4":value4bool}}',
+                            'multiline' => true,
+                            'width' => '300px',
+                            'caption' => 'URL'],
                         [
                             'type'    => 'Label',
                             'caption' => '     example values begin and end with curly brackets'],
@@ -1023,8 +1036,10 @@ class IFTTT extends IPSModule
                             'type'    => 'Label',
                             'caption' => ' - URL:'],
                         [
-                            'type'    => 'Label',
-                            'caption' => '     ' . $this->GetIPSConnect() . '/hook/IFTTT'],
+                            'type'    => 'ValidationTextBox',
+                            'name'    => 'URL',
+                            'value'   => $this->GetIPSConnect() . '/hook/IFTTT',
+                            'caption' => 'URL'],
                         [
                             'type'    => 'Label',
                             'caption' => ' - choose Action Service Webhooks'],
