@@ -1,5 +1,4 @@
 <?php
-
 declare(strict_types=1);
 
 class IFTTTIO extends IPSModule
@@ -14,6 +13,7 @@ class IFTTTIO extends IPSModule
 
         $this->RegisterPropertyString('username', 'ipsymcon');
         $this->RegisterPropertyString('password', 'user@h0me');
+        $this->RegisterPropertyBoolean('active', true);
     }
 
     public function ApplyChanges()
@@ -47,8 +47,17 @@ class IFTTTIO extends IPSModule
             }
             else
             {
-                $result  = $this->SendCommand($command);
-                $this->SendDebug('IFTTT', 'Command response: ' . json_encode($result), 0);
+                $active = $this->ReadPropertyBoolean('active');
+                if($active)
+                {
+                    $result  = $this->SendCommand($command);
+                    $this->SendDebug('IFTTT', 'Command response: ' . json_encode($result), 0);
+                }
+                else
+                {
+                    $result  = 'I/O is inactive';
+                }
+
             }
         } catch (Exception $ex) {
             echo $ex->getMessage();
@@ -289,7 +298,11 @@ IFTTTIO_ProcessHookDataOLD(' . $this->InstanceID . ');
         // $objectid = $data->objectid;
         // $values   = $data->values;
         $this->SendDebug('IFTTT I/O:', $iftttjson . ' empfangen.', 0);
-        $this->SendJSON($data);
+        $active = $this->ReadPropertyBoolean('active');
+        if($active)
+        {
+            $this->SendJSON($data);
+        }
     }
 
     /**
@@ -344,7 +357,11 @@ IFTTTIO_ProcessHookDataOLD(' . $this->InstanceID . ');
         }
         // $objectid = $data->objectid;
         // $values   = $data->values;
-        $this->SendJSON($data);
+        $active = $this->ReadPropertyBoolean('active');
+        if($active)
+        {
+            $this->SendJSON($data);
+        }
     }
 
     //################# SEMAPHOREN Helper  - private
