@@ -6,11 +6,11 @@
     },
     {
       "type": "Label",
-      "label": "Connection from IFTTT to IP-Symcon"
+      "caption": "Connection from IFTTT to IP-Symcon"
     },
     {
       "type": "Label",
-      "label": "authentication for IFTTT webhook"
+      "caption": "authentication for IFTTT webhook"
     },
     {
       "name": "username",
@@ -21,6 +21,15 @@
       "type": "PasswordTextBox",
       "name": "password",
       "caption": "password"
+    },
+    {
+      "type": "Label",
+      "caption": "communication with IFTTT"
+    },
+    {
+      "name": "active",
+      "type": "CheckBox",
+      "caption": "incoming and outgoing communication"
     }
   ],
   "status": [

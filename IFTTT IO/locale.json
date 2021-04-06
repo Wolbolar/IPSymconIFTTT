@@ -6,6 +6,8 @@
 			"authentication for IFTTT webhook":"Authentifizierung für den IFTTT Webhook",
 			"username":"Benutzername",
 			"password":"Passwort",
+			"communication with IFTTT": "Kommunikation mit IFTTT",
+			"incoming and outgoing communication": "ein- und ausgehende Kommunikation",
 			"Creating instance.": "Die Instanz wird erstellt.",
 			"Interface closed.": "Interface geschlossen.",
 			"IFTTT I/O created.": "IFTTT I/O erstellt."			
